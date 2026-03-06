@@ -108,14 +108,29 @@ export function useConversations() {
       }));
 
       setIsLoading(true);
-      const response = SIMULATED_RESPONSES[Math.floor(Math.random() * SIMULATED_RESPONSES.length)];
 
-      setTimeout(() => {
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+          body: JSON.stringify({ question: trimmed }),
+        });
+
+        if (!res.ok) throw new Error("HTTP error");
+
+        const json = await res.json();
+        const sources = (json.sources || []).map(
+          (s: { document: string; page: number }) => `${s.document} — Page ${s.page}`
+        );
+
         const agentMsg: Message = {
           id: nextId.current++,
           role: "agent",
-          text: response.text,
-          sources: response.sources,
+          text: json.reponse || "Pas de réponse.",
+          sources,
         };
         setData((prev) => ({
           ...prev,
@@ -125,8 +140,23 @@ export function useConversations() {
               : c
           ),
         }));
+      } catch {
+        const errorMsg: Message = {
+          id: nextId.current++,
+          role: "agent",
+          text: "⚠️ Serveur indisponible.",
+        };
+        setData((prev) => ({
+          ...prev,
+          conversations: prev.conversations.map((c) =>
+            c.id === prev.activeId
+              ? { ...c, messages: [...c.messages, errorMsg], updatedAt: Date.now() }
+              : c
+          ),
+        }));
+      } finally {
         setIsLoading(false);
-      }, 1500 + Math.random() * 1000);
+      }
     },
     [isLoading]
   );
