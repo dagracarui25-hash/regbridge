@@ -22,32 +22,7 @@ const WELCOME_MESSAGE: Message = {
   sources: [],
 };
 
-const SIMULATED_RESPONSES = [
-  {
-    text: "Selon la Circulaire FINMA 2017/1 « Gouvernance d'entreprise – banques », les établissements doivent disposer d'un système de contrôle interne adéquat comprenant la gestion des risques, la compliance et l'audit interne. Le conseil d'administration est responsable de la supervision de ces fonctions.",
-    sources: [
-      "Circulaire FINMA 2017/1 – Gouvernance d'entreprise",
-      "Loi sur les banques (LB), Art. 3",
-      "Ordonnance sur les banques (OB), Art. 12",
-    ],
-  },
-  {
-    text: "En matière de lutte contre le blanchiment d'argent (LBA), la FINMA exige que les intermédiaires financiers vérifient l'identité du cocontractant et identifient l'ayant droit économique. Les obligations de diligence sont détaillées dans l'OBA-FINMA.",
-    sources: [
-      "Loi sur le blanchiment d'argent (LBA), Art. 3-5",
-      "OBA-FINMA, Art. 13-23",
-      "Convention de diligence des banques (CDB 20)",
-    ],
-  },
-  {
-    text: "Les exigences de fonds propres pour les banques suisses sont définies par l'Ordonnance sur les fonds propres (OFR). Les banques d'importance systémique sont soumises à des exigences supplémentaires conformément à la réglementation « too big to fail » (TBTF).",
-    sources: [
-      "Ordonnance sur les fonds propres (OFR), Art. 41-46",
-      "Circulaire FINMA 2011/2 – Volant de fonds propres",
-      "Rapport FINMA sur les banques d'importance systémique 2023",
-    ],
-  },
-];
+const API_URL = "https://granolithic-belletristic-bulah.ngrok-free.dev/question";
 
 const STORAGE_KEY = "compliancerag-conversations";
 
@@ -112,7 +87,7 @@ export function useConversations() {
   }, []);
 
   const sendMessage = useCallback(
-    (text: string) => {
+    async (text: string) => {
       const trimmed = text.trim();
       if (!trimmed || isLoading) return;
 
@@ -133,14 +108,29 @@ export function useConversations() {
       }));
 
       setIsLoading(true);
-      const response = SIMULATED_RESPONSES[Math.floor(Math.random() * SIMULATED_RESPONSES.length)];
 
-      setTimeout(() => {
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+          },
+          body: JSON.stringify({ question: trimmed }),
+        });
+
+        if (!res.ok) throw new Error("HTTP error");
+
+        const json = await res.json();
+        const sources = (json.sources || []).map(
+          (s: { document: string; page: number }) => `${s.document} — Page ${s.page}`
+        );
+
         const agentMsg: Message = {
           id: nextId.current++,
           role: "agent",
-          text: response.text,
-          sources: response.sources,
+          text: json.reponse || "Pas de réponse.",
+          sources,
         };
         setData((prev) => ({
           ...prev,
@@ -150,8 +140,23 @@ export function useConversations() {
               : c
           ),
         }));
+      } catch {
+        const errorMsg: Message = {
+          id: nextId.current++,
+          role: "agent",
+          text: "⚠️ Serveur indisponible.",
+        };
+        setData((prev) => ({
+          ...prev,
+          conversations: prev.conversations.map((c) =>
+            c.id === prev.activeId
+              ? { ...c, messages: [...c.messages, errorMsg], updatedAt: Date.now() }
+              : c
+          ),
+        }));
+      } finally {
         setIsLoading(false);
-      }, 1500 + Math.random() * 1000);
+      }
     },
     [isLoading]
   );
