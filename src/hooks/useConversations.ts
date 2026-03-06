@@ -24,7 +24,7 @@ const WELCOME_MESSAGE: Message = {
 
 const API_URL = "https://granolithic-belletristic-bulah.ngrok-free.dev/question";
 
-const STORAGE_KEY = "compliancerag-conversations";
+const STORAGE_KEY = "regbridge-conversations";
 
 function createNewConversation(): Conversation {
   return {

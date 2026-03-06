@@ -248,7 +248,7 @@ const Index = () => {
                 </Button>
               </div>
               <p className="text-[10px] text-muted-foreground/40 text-center mt-2 font-mono">
-                ComplianceRAG v1.0 — Les réponses sont générées à titre informatif
+                RegBridge v1.0 — FINMA 🇨🇭
               </p>
             </div>
           </div>
