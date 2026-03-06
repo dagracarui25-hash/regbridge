@@ -1,0 +1,113 @@
+import { Plus, MessageSquare, Trash2, Shield } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuAction,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { Conversation } from "@/hooks/useConversations";
+
+interface ChatSidebarProps {
+  conversations: Conversation[];
+  activeId: string;
+  onSelect: (id: string) => void;
+  onCreate: () => void;
+  onDelete: (id: string) => void;
+}
+
+function formatDate(ts: number) {
+  const d = new Date(ts);
+  const now = new Date();
+  if (d.toDateString() === now.toDateString()) return "Aujourd'hui";
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return "Hier";
+  return d.toLocaleDateString("fr-CH", { day: "numeric", month: "short" });
+}
+
+export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDelete }: ChatSidebarProps) {
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
+
+  return (
+    <Sidebar collapsible="icon" className="border-r border-border/50">
+      <SidebarHeader className="p-3">
+        {!collapsed && (
+          <div className="flex items-center gap-2 mb-3 px-1">
+            <div className="w-7 h-7 rounded-lg gradient-primary flex items-center justify-center">
+              <Shield className="w-3.5 h-3.5 text-primary-foreground" />
+            </div>
+            <span className="text-sm font-semibold gradient-text">ComplianceRAG</span>
+          </div>
+        )}
+        <Button
+          onClick={onCreate}
+          size={collapsed ? "icon" : "sm"}
+          className="w-full gradient-primary text-primary-foreground hover:opacity-90 glow-sm rounded-lg text-xs font-medium"
+        >
+          <Plus className="h-4 w-4" />
+          {!collapsed && <span className="ml-1.5">Nouvelle conversation</span>}
+        </Button>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-mono">
+              Historique
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {conversations.map((conv) => {
+                const isActive = conv.id === activeId;
+                const msgCount = conv.messages.filter((m) => m.role === "user").length;
+                return (
+                  <SidebarMenuItem key={conv.id}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      onClick={() => onSelect(conv.id)}
+                      tooltip={conv.title}
+                      className="group/item"
+                    >
+                      <MessageSquare className="h-4 w-4 shrink-0" />
+                      {!collapsed && (
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="truncate text-xs font-medium">{conv.title}</span>
+                          <span className="text-[10px] text-muted-foreground/50 font-mono">
+                            {formatDate(conv.updatedAt)} · {msgCount} msg
+                          </span>
+                        </div>
+                      )}
+                    </SidebarMenuButton>
+                    {!collapsed && conversations.length > 1 && (
+                      <SidebarMenuAction
+                        showOnHover
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(conv.id);
+                        }}
+                        className="hover:text-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </SidebarMenuAction>
+                    )}
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
