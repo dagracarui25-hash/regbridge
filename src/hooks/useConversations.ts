@@ -87,7 +87,7 @@ export function useConversations() {
   }, []);
 
   const sendMessage = useCallback(
-    (text: string) => {
+    async (text: string) => {
       const trimmed = text.trim();
       if (!trimmed || isLoading) return;
 
