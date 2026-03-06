@@ -103,18 +103,18 @@ export function useConversations() {
                 title: c.messages.filter((m) => m.role === "user").length === 0 ? trimmed.slice(0, 40) : c.title,
                 updatedAt: Date.now(),
               }
-            : c
+            : c,
         ),
       }));
 
       setIsLoading(true);
 
       try {
-        const res = await fetch(API_URL, {
+        const res = await fetch("https://granolithic-belletristic-bulah.ngrok-free.dev/question", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
+            "ngrok-skip-browser-warning": "69420",
           },
           body: JSON.stringify({ question: trimmed }),
         });
@@ -123,7 +123,7 @@ export function useConversations() {
 
         const json = await res.json();
         const sources = (json.sources || []).map(
-          (s: { document: string; page: number }) => `${s.document} — Page ${s.page}`
+          (s: { document: string; page: number }) => `${s.document} — Page ${s.page}`,
         );
 
         const agentMsg: Message = {
@@ -135,9 +135,7 @@ export function useConversations() {
         setData((prev) => ({
           ...prev,
           conversations: prev.conversations.map((c) =>
-            c.id === prev.activeId
-              ? { ...c, messages: [...c.messages, agentMsg], updatedAt: Date.now() }
-              : c
+            c.id === prev.activeId ? { ...c, messages: [...c.messages, agentMsg], updatedAt: Date.now() } : c,
           ),
         }));
       } catch {
@@ -149,16 +147,14 @@ export function useConversations() {
         setData((prev) => ({
           ...prev,
           conversations: prev.conversations.map((c) =>
-            c.id === prev.activeId
-              ? { ...c, messages: [...c.messages, errorMsg], updatedAt: Date.now() }
-              : c
+            c.id === prev.activeId ? { ...c, messages: [...c.messages, errorMsg], updatedAt: Date.now() } : c,
           ),
         }));
       } finally {
         setIsLoading(false);
       }
     },
-    [isLoading]
+    [isLoading],
   );
 
   return {
