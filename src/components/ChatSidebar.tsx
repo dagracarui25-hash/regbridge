@@ -11,8 +11,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuAction,
-  useSidebar,
-} from "@/components/ui/sidebar";
+  useSidebar } from
+"@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Conversation } from "@/hooks/useConversations";
 
@@ -41,19 +41,19 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="p-3">
-        {!collapsed && (
-          <div className="flex items-center gap-2 mb-3 px-1">
+        {!collapsed &&
+        <div className="flex items-center gap-2 mb-3 px-1">
             <div className="w-7 h-7 rounded-lg gradient-primary flex items-center justify-center">
               <Shield className="w-3.5 h-3.5 text-primary-foreground" />
             </div>
-            <span className="text-sm font-semibold gradient-text">ComplianceRAG</span>
+            <span className="text-sm font-semibold gradient-text">RegBridge</span>
           </div>
-        )}
+        }
         <Button
           onClick={onCreate}
           size={collapsed ? "icon" : "sm"}
-          className="w-full gradient-primary text-primary-foreground hover:opacity-90 glow-sm rounded-lg text-xs font-medium"
-        >
+          className="w-full gradient-primary text-primary-foreground hover:opacity-90 glow-sm rounded-lg text-xs font-medium">
+          
           <Plus className="h-4 w-4" />
           {!collapsed && <span className="ml-1.5">Nouvelle conversation</span>}
         </Button>
@@ -61,11 +61,11 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
 
       <SidebarContent>
         <SidebarGroup>
-          {!collapsed && (
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-mono">
+          {!collapsed &&
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-mono">
               Historique
             </SidebarGroupLabel>
-          )}
+          }
           <SidebarGroupContent>
             <SidebarMenu>
               {conversations.map((conv) => {
@@ -77,37 +77,37 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
                       isActive={isActive}
                       onClick={() => onSelect(conv.id)}
                       tooltip={conv.title}
-                      className="group/item"
-                    >
+                      className="group/item">
+                      
                       <MessageSquare className="h-4 w-4 shrink-0" />
-                      {!collapsed && (
-                        <div className="flex flex-col min-w-0 flex-1">
+                      {!collapsed &&
+                      <div className="flex flex-col min-w-0 flex-1">
                           <span className="truncate text-xs font-medium">{conv.title}</span>
                           <span className="text-[10px] text-muted-foreground/50 font-mono">
                             {formatDate(conv.updatedAt)} · {msgCount} msg
                           </span>
                         </div>
-                      )}
+                      }
                     </SidebarMenuButton>
-                    {!collapsed && conversations.length > 1 && (
-                      <SidebarMenuAction
-                        showOnHover
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(conv.id);
-                        }}
-                        className="hover:text-destructive"
-                      >
+                    {!collapsed && conversations.length > 1 &&
+                    <SidebarMenuAction
+                      showOnHover
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(conv.id);
+                      }}
+                      className="hover:text-destructive">
+                      
                         <Trash2 className="h-3.5 w-3.5" />
                       </SidebarMenuAction>
-                    )}
-                  </SidebarMenuItem>
-                );
+                    }
+                  </SidebarMenuItem>);
+
               })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-    </Sidebar>
-  );
+    </Sidebar>);
+
 }
