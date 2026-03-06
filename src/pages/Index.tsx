@@ -134,7 +134,11 @@ const Index = () => {
                       "glass rounded-bl-sm"}`
                       }>
                       
-                        <p className="whitespace-pre-wrap">{msg.text}</p>
+                        {msg.role === "agent" ? (
+                          <FormattedMessage text={msg.text} />
+                        ) : (
+                          <p className="whitespace-pre-wrap">{msg.text}</p>
+                        )}
                         {msg.role === "agent" && msg.sources && msg.sources.length > 0 &&
                       <div className="mt-3 pt-2.5 border-t border-white/[0.06]">
                             <p className="text-[11px] font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
