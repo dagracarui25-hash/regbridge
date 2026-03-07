@@ -113,6 +113,7 @@ export function useConversations(options: UseConversationsOptions = {}) {
       }));
 
       setIsLoading(true);
+      isLoadingRef.current = true;
 
       try {
         const ctrl = new AbortController();
@@ -162,9 +163,10 @@ export function useConversations(options: UseConversationsOptions = {}) {
         }));
       } finally {
         setIsLoading(false);
+        isLoadingRef.current = false;
       }
     },
-    [isLoading, options],
+    [options],
   );
 
   return {

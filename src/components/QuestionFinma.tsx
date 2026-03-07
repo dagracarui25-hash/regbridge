@@ -98,10 +98,10 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                         </div>
                       )}
                       <div
-                        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                        className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                           msg.role === "user"
-                            ? "gradient-primary text-primary-foreground rounded-br-sm glow-sm"
-                            : "glass rounded-bl-sm"
+                            ? "max-w-[80%] gradient-primary text-primary-foreground rounded-br-sm glow-sm"
+                            : "max-w-full rounded-bl-sm glass"
                         }`}
                       >
                         {msg.role === "agent" ? (
