@@ -89,10 +89,12 @@ export function useConversations(options: UseConversationsOptions = {}) {
     });
   }, []);
 
+  const isLoadingRef = useRef(false);
+
   const sendMessage = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
-      if (!trimmed || isLoading) return;
+      if (!trimmed || isLoadingRef.current) return;
 
       const userMsg: Message = { id: nextId.current++, role: "user", text: trimmed };
 
