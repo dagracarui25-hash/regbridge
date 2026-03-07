@@ -1,0 +1,319 @@
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Upload, Trash2, RefreshCw, FileText, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { AccessCodeModal } from "@/components/AccessCodeModal";
+import { useDocumentAccess } from "@/hooks/useDocumentAccess";
+import { getApiUrl } from "@/hooks/useApiUrl";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+interface Document {
+  nom_fichier: string;
+  categorie: string;
+  chunks?: number;
+  date_ajout?: string;
+}
+
+const CATEGORIES = [
+  "Procédure interne",
+  "Politique RH",
+  "Contrat / Template",
+  "Règlement interne",
+  "Note de direction",
+  "Compliance interne",
+  "Autre",
+];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  "Procédure interne": "bg-blue-500/20 text-blue-300",
+  "Politique RH": "bg-purple-500/20 text-purple-300",
+  "Contrat / Template": "bg-amber-500/20 text-amber-300",
+  "Règlement interne": "bg-emerald-500/20 text-emerald-300",
+  "Note de direction": "bg-rose-500/20 text-rose-300",
+  "Compliance interne": "bg-cyan-500/20 text-cyan-300",
+  "Autre": "bg-gray-500/20 text-gray-300",
+};
+
+interface DocumentsInternesProps {
+  onError: () => void;
+}
+
+export function DocumentsInternes({ onError }: DocumentsInternesProps) {
+  const { isAuthenticated, authenticate, validateSession } = useDocumentAccess();
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadResult, setUploadResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const fetchDocuments = useCallback(async () => {
+    setLoadingDocs(true);
+    try {
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), 30000);
+      const res = await fetch(`${getApiUrl()}/documents`, {
+        headers: { "ngrok-skip-browser-warning": "69420" },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error("HTTP error");
+      const json = await res.json();
+      setDocuments(Array.isArray(json) ? json : []);
+    } catch {
+      onError();
+    } finally {
+      setLoadingDocs(false);
+    }
+  }, [onError]);
+
+  useEffect(() => {
+    if (isAuthenticated) fetchDocuments();
+  }, [isAuthenticated, fetchDocuments]);
+
+  const handleUpload = async () => {
+    if (!selectedFile || uploading) return;
+    if (!validateSession()) return;
+
+    setUploading(true);
+    setUploadProgress(10);
+    setUploadResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append("categorie", category);
+
+      // Simulate progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress((p) => Math.min(p + 10, 90));
+      }, 500);
+
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), 60000);
+      const res = await fetch(`${getApiUrl()}/upload-document`, {
+        method: "POST",
+        headers: { "ngrok-skip-browser-warning": "69420" },
+        body: formData,
+        signal: ctrl.signal,
+      });
+      clearTimeout(timeout);
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (!res.ok) throw new Error("Upload failed");
+      const json = await res.json();
+      setUploadResult({ ok: true, message: `✅ Document indexé — ${json.chunks || 0} chunks créés` });
+      setSelectedFile(null);
+      if (fileRef.current) fileRef.current.value = "";
+      fetchDocuments();
+    } catch {
+      setUploadResult({ ok: false, message: "❌ Erreur lors de l'upload du document" });
+      onError();
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget || deleting) return;
+    if (!validateSession()) { setDeleteTarget(null); return; }
+
+    setDeleting(true);
+    try {
+      const ctrl = new AbortController();
+      const timeout = setTimeout(() => ctrl.abort(), 30000);
+      const res = await fetch(`${getApiUrl()}/documents/${encodeURIComponent(deleteTarget)}`, {
+        method: "DELETE",
+        headers: { "ngrok-skip-browser-warning": "69420" },
+        signal: ctrl.signal,
+      });
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error("Delete failed");
+      setDocuments((prev) => prev.filter((d) => d.nom_fichier !== deleteTarget));
+    } catch {
+      onError();
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return <AccessCodeModal onAuthenticate={authenticate} />;
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Upload zone */}
+        <div className="glass rounded-2xl p-6 space-y-4">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <Upload className="h-4 w-4 text-primary" />
+            Ajouter un document
+          </h3>
+
+          <div className="space-y-3">
+            <div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".pdf"
+                onChange={(e) => { setSelectedFile(e.target.files?.[0] || null); setUploadResult(null); }}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className="flex items-center gap-3 cursor-pointer glass rounded-xl px-4 py-3 hover:border-primary/30 transition-colors"
+              >
+                <FileText className="h-5 w-5 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  {selectedFile ? selectedFile.name : "Sélectionner un fichier PDF"}
+                </span>
+              </label>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">Catégorie</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/40 transition-colors"
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <Button
+              onClick={handleUpload}
+              disabled={!selectedFile || uploading}
+              className="gradient-primary text-primary-foreground rounded-xl h-10 px-6"
+            >
+              {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+              Envoyer
+            </Button>
+
+            {uploading && (
+              <Progress value={uploadProgress} className="h-2 rounded-full" />
+            )}
+
+            <AnimatePresence>
+              {uploadResult && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className={`flex items-center gap-2 text-sm font-medium rounded-xl px-4 py-2.5 ${
+                    uploadResult.ok ? "bg-emerald-500/10 text-emerald-400" : "bg-destructive/10 text-destructive"
+                  }`}
+                >
+                  {uploadResult.ok ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+                  {uploadResult.message}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Document library */}
+        <div className="glass rounded-2xl p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              Bibliothèque de documents
+            </h3>
+            <Button
+              onClick={fetchDocuments}
+              disabled={loadingDocs}
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <RefreshCw className={`h-4 w-4 mr-1 ${loadingDocs ? "animate-spin" : ""}`} />
+              Rafraîchir
+            </Button>
+          </div>
+
+          {loadingDocs && documents.length === 0 ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 text-primary animate-spin" />
+            </div>
+          ) : documents.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">Aucun document indexé pour le moment.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {documents.map((doc) => (
+                <motion.div
+                  key={doc.nom_fichier}
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3"
+                >
+                  <span className="text-lg">📄</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{doc.nom_fichier}</p>
+                  </div>
+                  <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${CATEGORY_COLORS[doc.categorie] || CATEGORY_COLORS["Autre"]}`}>
+                    {doc.categorie}
+                  </span>
+                  <Button
+                    onClick={() => setDeleteTarget(doc.nom_fichier)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
+        <AlertDialogContent className="bg-card border-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground">Supprimer ce document ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Supprimer <strong>{deleteTarget}</strong> ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="rounded-lg">Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
