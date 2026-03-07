@@ -118,7 +118,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                               {msg.sources.map((src, i) => (
                                 <li
                                   key={i}
-                                  className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30"
+                                  className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30 break-all whitespace-normal"
                                 >
                                   {src}
                                 </li>
