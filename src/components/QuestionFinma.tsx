@@ -11,6 +11,8 @@ const SUGGESTIONS = [
   "Quelles sont les obligations KYC ?",
   "Exigences de fonds propres Bâle III",
   "Règles de gouvernance FINMA",
+  "Obligations en matière de blanchiment (LBA)",
+  "Exigences de reporting prudentiel",
 ];
 
 interface QuestionFinmaProps {
