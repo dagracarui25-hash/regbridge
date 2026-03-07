@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import { getApiUrl } from "@/hooks/useApiUrl";
 
 export interface Message {
   id: number;
@@ -21,8 +22,6 @@ const WELCOME_MESSAGE: Message = {
   text: "Bienvenue dans RegBridge. Je suis votre assistant spécialisé en conformité réglementaire FINMA. Posez-moi vos questions sur les circulaires, la LBA ou tout autre sujet de compliance bancaire suisse. Je citerai toujours mes sources.",
   sources: [],
 };
-
-const API_URL = "https://granolithic-belletristic-bulah.ngrok-free.dev/question";
 
 const STORAGE_KEY = "regbridge-conversations";
 
@@ -50,7 +49,11 @@ function loadConversations(): { conversations: Conversation[]; activeId: string 
   return { conversations: [initial], activeId: initial.id };
 }
 
-export function useConversations() {
+interface UseConversationsOptions {
+  onError?: () => void;
+}
+
+export function useConversations(options: UseConversationsOptions = {}) {
   const [data, setData] = useState(loadConversations);
   const [isLoading, setIsLoading] = useState(false);
   const nextId = useRef(100);
@@ -110,14 +113,18 @@ export function useConversations() {
       setIsLoading(true);
 
       try {
-        const res = await fetch("https://granolithic-belletristic-bulah.ngrok-free.dev/question", {
+        const ctrl = new AbortController();
+        const timeout = setTimeout(() => ctrl.abort(), 30000);
+        const res = await fetch(`${getApiUrl()}/question`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "69420",
           },
           body: JSON.stringify({ question: trimmed }),
+          signal: ctrl.signal,
         });
+        clearTimeout(timeout);
 
         if (!res.ok) throw new Error("HTTP error");
 
@@ -139,6 +146,7 @@ export function useConversations() {
           ),
         }));
       } catch {
+        options.onError?.();
         const errorMsg: Message = {
           id: nextId.current++,
           role: "agent",
@@ -154,7 +162,7 @@ export function useConversations() {
         setIsLoading(false);
       }
     },
-    [isLoading],
+    [isLoading, options],
   );
 
   return {
