@@ -138,8 +138,25 @@ serve(async (req) => {
       });
     }
 
-    // 2. Extract texts from payloads
-    const texts = points.map((p: any) => p.payload?.text || p.payload?.content || "");
+    // 2. Log sample payload to understand structure
+    if (points.length > 0) {
+      const sampleKeys = Object.keys(points[0].payload || {});
+      console.log(`Sample payload keys: ${JSON.stringify(sampleKeys)}`);
+      // Log first payload truncated
+      const sample = points[0].payload || {};
+      const truncated: Record<string, string> = {};
+      for (const [k, v] of Object.entries(sample)) {
+        const s = String(v);
+        truncated[k] = s.length > 100 ? s.slice(0, 100) + "..." : s;
+      }
+      console.log(`Sample payload: ${JSON.stringify(truncated)}`);
+    }
+
+    // Extract texts - try multiple field names
+    const texts = points.map((p: any) => {
+      const pl = p.payload || {};
+      return pl.text || pl.content || pl.chunk_text || pl.page_content || pl.body || "";
+    });
     const validIndices = texts.map((t: string, i: number) => ({ text: t, index: i })).filter((x: any) => x.text.length > 10);
 
     console.log(`${validIndices.length} chunks with valid text out of ${points.length}`);
