@@ -80,7 +80,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
           {/* Chat area */}
           <div className="flex-1 overflow-hidden">
             <div ref={scrollRef} className="h-full overflow-y-auto px-4 py-6">
-              <div className="max-w-3xl mx-auto space-y-4">
+              <div className="max-w-5xl mx-auto space-y-4">
                 <AnimatePresence initial={false}>
                   {messages.map((msg) => (
                     <motion.div
@@ -197,7 +197,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
 
           {/* Input */}
           <div className="flex-shrink-0 glass-strong px-4 py-3">
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
                 <input
                   ref={inputRef}
