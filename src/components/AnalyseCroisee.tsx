@@ -15,6 +15,8 @@ interface AnalyseCroiseeProps {
   onError: () => void;
 }
 
+type ErrorType = "offline" | "not_found" | null;
+
 const SUGGESTION_CARDS = [
   { icon: Scale, key: "Comparer KYC interne vs FINMA", query: "Compare les obligations KYC internes avec les exigences FINMA" },
   { icon: FileSearch, key: "Analyser la conformité LBA", query: "Analyse la conformité de nos procédures avec la LBA" },

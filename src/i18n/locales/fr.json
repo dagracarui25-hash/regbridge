@@ -103,7 +103,9 @@
   },
   "error": {
     "banner": "⚠️ Serveur hors ligne — Relancez le notebook Etape4b dans Google Colab et mettez à jour l'URL dans ⚙️ Paramètres.",
-    "generic": "Une erreur est survenue"
+    "generic": "Une erreur est survenue",
+    "notFound": "⚠️ Le endpoint /question-croisee n'existe pas sur le serveur. Vérifiez que le backend supporte l'analyse croisée.",
+    "offline": "⚠️ Serveur injoignable. Vérifiez que le notebook Colab est actif et l'URL correcte dans ⚙️ Paramètres."
   },
   "footer": {
     "version": "RegBridge v1.0 — FINMA 🇨🇭"

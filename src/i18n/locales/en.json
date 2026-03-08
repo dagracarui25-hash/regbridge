@@ -103,7 +103,9 @@
   },
   "error": {
     "banner": "⚠️ Server offline — Restart the Etape4b notebook in Google Colab and update the URL in ⚙️ Settings.",
-    "generic": "An error occurred"
+    "generic": "An error occurred",
+    "notFound": "⚠️ The /question-croisee endpoint does not exist on the server. Ensure the backend supports cross analysis.",
+    "offline": "⚠️ Server unreachable. Check that the Colab notebook is running and the URL is correct in ⚙️ Settings."
   },
   "footer": {
     "version": "RegBridge v1.0 — FINMA 🇨🇭"
