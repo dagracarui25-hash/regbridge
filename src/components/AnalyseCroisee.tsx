@@ -1,5 +1,5 @@
 import { useState, useRef, KeyboardEvent } from "react";
-import { Send, Loader2, Building2, Landmark, GitCompare, Scale, FileSearch, AlertTriangle } from "lucide-react";
+import { Send, Loader2, Building2, Landmark, GitCompare, Scale, FileSearch, AlertTriangle, Download } from "lucide-react";
 import { FormattedMessage } from "@/components/FormattedMessage";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
