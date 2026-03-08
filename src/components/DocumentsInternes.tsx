@@ -393,11 +393,18 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
                   if (sortBy === "nom") return a.nom_fichier.localeCompare(b.nom_fichier, "fr");
                   return (b.date_ajout || "").localeCompare(a.date_ajout || "");
                 });
-              return filtered.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground">Aucun document dans cette catégorie.</p>
-                </div>
-              ) : (
+              return (
+                <>
+                  {(searchQuery || filterCategory !== "Toutes") && (
+                    <p className="text-xs text-muted-foreground">
+                      {filtered.length} résultat{filtered.length !== 1 ? "s" : ""} trouvé{filtered.length !== 1 ? "s" : ""}
+                    </p>
+                  )}
+                  {filtered.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-sm text-muted-foreground">Aucun document trouvé.</p>
+                    </div>
+                  ) : (
                 <div className="space-y-2">
                   {filtered.map((doc) => (
                     <motion.div
