@@ -108,14 +108,18 @@ export function useConversations(options: UseConversationsOptions = {}) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, [data]);
 
-  // Check server health on mount
+  // Check server health on mount + poll every 30s
   useEffect(() => {
-    checkServerHealth().then((isOnline) => {
-      setIsServerOffline(!isOnline);
-      if (!isOnline) {
-        options.onServerOffline?.();
-      }
-    });
+    const check = () => {
+      checkServerHealth().then((isOnline) => {
+        setIsServerOffline(!isOnline);
+        if (isOnline) options.onServerOnline?.();
+        else options.onServerOffline?.();
+      });
+    };
+    check();
+    const interval = setInterval(check, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const setActiveId = useCallback((id: string) => {
