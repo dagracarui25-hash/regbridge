@@ -39,22 +39,17 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
     setErrorType(null);
 
     try {
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), 30000);
-      const res = await fetch(`${getApiUrl()}/question-croisee`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "69420" },
-        body: JSON.stringify({ question: trimmed }),
-        signal: ctrl.signal,
+      const { data, error } = await supabase.functions.invoke("question-croisee", {
+        body: { question: trimmed },
       });
-      clearTimeout(timeout);
-      if (res.status === 404) {
-        setErrorType("not_found");
-        return;
+      if (error) {
+        if (error.message?.includes("404")) {
+          setErrorType("not_found");
+          return;
+        }
+        throw error;
       }
-      if (!res.ok) throw new Error("HTTP error");
-      const json = await res.json();
-      setResult({ finma: json.finma || null, interne: json.interne || null });
+      setResult({ finma: data.finma || null, interne: data.interne || null });
     } catch {
       setErrorType("offline");
       onError();
