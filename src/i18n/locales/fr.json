@@ -79,6 +79,28 @@
     "placeholder": "Posez votre question pour l'analyse croisée...",
     "page": "Page {{page}}"
   },
+  "regs": {
+    "button": "Réglementations",
+    "title": "Réglementations disponibles",
+    "drawerTitle": "Référentiels réglementaires",
+    "drawerSubtitle": "Couverture documentaire de RegBridge",
+    "active": "actif",
+    "comingSoon": "Bientôt",
+    "tooltipTitle": "En cours de construction",
+    "tooltipDesc": "Cette réglementation sera intégrée dans RegBridge prochainement.",
+    "tooltipContest": "Disponible si nous remportons le concours GenAI Zürich 2026 !",
+    "footerDesc": "L'intégration complète de ces référentiels est notre prochain objectif. Soutenez RegBridge !",
+    "integrated": "réglementations intégrées",
+    "cat": {
+      "finma": "FINMA — Autorité de surveillance",
+      "cyber": "Cybersécurité",
+      "risk": "Gestion des risques & gouvernance",
+      "aml": "AML / LBA — Lutte contre le blanchiment",
+      "fiscal": "Réglementations fiscales & reporting",
+      "data": "Données & protection",
+      "cloud": "Cloud & externalisation"
+    }
+  },
   "error": {
     "banner": "⚠️ Serveur hors ligne — Relancez le notebook Etape4b dans Google Colab et mettez à jour l'URL dans ⚙️ Paramètres.",
     "generic": "Une erreur est survenue"

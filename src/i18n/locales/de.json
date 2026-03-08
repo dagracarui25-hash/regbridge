@@ -79,6 +79,28 @@
     "placeholder": "Stellen Sie Ihre Frage für die Kreuzanalyse...",
     "page": "Seite {{page}}"
   },
+  "regs": {
+    "button": "Regulierungen",
+    "title": "Verfügbare Regulierungen",
+    "drawerTitle": "Regulatorische Referenzen",
+    "drawerSubtitle": "Dokumentarische Abdeckung von RegBridge",
+    "active": "aktiv",
+    "comingSoon": "Bald",
+    "tooltipTitle": "In Entwicklung",
+    "tooltipDesc": "Diese Regulierung wird bald in RegBridge integriert.",
+    "tooltipContest": "Verfügbar, wenn wir den GenAI Zürich 2026 Wettbewerb gewinnen!",
+    "footerDesc": "Die vollständige Integration dieser Referenzen ist unser nächstes Ziel. Unterstützen Sie RegBridge!",
+    "integrated": "Regulierungen integriert",
+    "cat": {
+      "finma": "FINMA — Aufsichtsbehörde",
+      "cyber": "Cybersicherheit",
+      "risk": "Risikomanagement & Governance",
+      "aml": "GwG — Geldwäschereibekämpfung",
+      "fiscal": "Steuerliche Regulierungen & Reporting",
+      "data": "Daten & Schutz",
+      "cloud": "Cloud & Auslagerung"
+    }
+  },
   "error": {
     "banner": "⚠️ Server offline — Starten Sie das Notebook Etape4b in Google Colab neu und aktualisieren Sie die URL in ⚙️ Einstellungen.",
     "generic": "Ein Fehler ist aufgetreten"

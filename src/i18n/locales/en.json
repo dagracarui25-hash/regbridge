@@ -79,6 +79,28 @@
     "placeholder": "Ask your question for cross analysis...",
     "page": "Page {{page}}"
   },
+  "regs": {
+    "button": "Regulations",
+    "title": "Available regulations",
+    "drawerTitle": "Regulatory references",
+    "drawerSubtitle": "RegBridge document coverage",
+    "active": "active",
+    "comingSoon": "Soon",
+    "tooltipTitle": "Under construction",
+    "tooltipDesc": "This regulation will be integrated into RegBridge soon.",
+    "tooltipContest": "Available if we win the GenAI Zürich 2026 contest!",
+    "footerDesc": "Full integration of these references is our next goal. Support RegBridge!",
+    "integrated": "regulations integrated",
+    "cat": {
+      "finma": "FINMA — Supervisory Authority",
+      "cyber": "Cybersecurity",
+      "risk": "Risk management & governance",
+      "aml": "AML — Anti-money laundering",
+      "fiscal": "Tax regulations & reporting",
+      "data": "Data & protection",
+      "cloud": "Cloud & outsourcing"
+    }
+  },
   "error": {
     "banner": "⚠️ Server offline — Restart the Etape4b notebook in Google Colab and update the URL in ⚙️ Settings.",
     "generic": "An error occurred"

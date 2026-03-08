@@ -8,6 +8,7 @@ import { QuestionFinma } from "@/components/QuestionFinma";
 import { AnalyseCroisee } from "@/components/AnalyseCroisee";
 import { DocumentsInternes } from "@/components/DocumentsInternes";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { RegulationsDrawer } from "@/components/RegulationsDrawer";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "react-i18next";
 
@@ -50,6 +51,7 @@ const Index = () => {
                 {showError ? t("nav.offline") : t("nav.online")}
               </span>
             </div>
+            <RegulationsDrawer />
             <LanguageSelector />
             <SettingsDrawer />
             <Button

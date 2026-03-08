@@ -79,6 +79,28 @@
     "placeholder": "Fai la tua domanda per l'analisi incrociata...",
     "page": "Pagina {{page}}"
   },
+  "regs": {
+    "button": "Regolamenti",
+    "title": "Regolamenti disponibili",
+    "drawerTitle": "Riferimenti normativi",
+    "drawerSubtitle": "Copertura documentaria di RegBridge",
+    "active": "attivo",
+    "comingSoon": "Presto",
+    "tooltipTitle": "In costruzione",
+    "tooltipDesc": "Questo regolamento sarà presto integrato in RegBridge.",
+    "tooltipContest": "Disponibile se vinciamo il concorso GenAI Zürich 2026!",
+    "footerDesc": "L'integrazione completa di questi riferimenti è il nostro prossimo obiettivo. Supporta RegBridge!",
+    "integrated": "regolamenti integrati",
+    "cat": {
+      "finma": "FINMA — Autorità di vigilanza",
+      "cyber": "Cybersicurezza",
+      "risk": "Gestione dei rischi & governance",
+      "aml": "LRD — Lotta al riciclaggio",
+      "fiscal": "Regolamenti fiscali & reporting",
+      "data": "Dati & protezione",
+      "cloud": "Cloud & esternalizzazione"
+    }
+  },
   "error": {
     "banner": "⚠️ Server offline — Riavvia il notebook Etape4b in Google Colab e aggiorna l'URL in ⚙️ Impostazioni.",
     "generic": "Si è verificato un errore"
