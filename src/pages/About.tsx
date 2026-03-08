@@ -2,6 +2,7 @@ import { Shield, ArrowLeft, MessageSquare, GitCompare, FolderOpen, Server, Cpu, 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
@@ -21,8 +22,8 @@ function SectionTitle({ icon: Icon, title, id }: { icon: any; title: string; id:
   );
 }
 
-function FeatureCard({ icon: Icon, title, items, examples, limits }: {
-  icon: any; title: string; items: string[]; examples?: string[]; limits?: string[];
+function FeatureCard({ icon: Icon, title, items, examples, limits, examplesLabel, limitsLabel }: {
+  icon: any; title: string; items: string[]; examples?: string[]; limits?: string[]; examplesLabel: string; limitsLabel: string;
 }) {
   return (
     <motion.div {...fadeUp(0.1)} className="glass-card rounded-2xl p-6 border-gradient space-y-4">
@@ -40,7 +41,7 @@ function FeatureCard({ icon: Icon, title, items, examples, limits }: {
       </ul>
       {examples && examples.length > 0 && (
         <div className="pt-3 border-t border-white/[0.06]">
-          <p className="text-[10px] uppercase tracking-widest text-accent-gold font-bold mb-2 font-display">Exemples</p>
+          <p className="text-[10px] uppercase tracking-widest text-accent-gold font-bold mb-2 font-display">{examplesLabel}</p>
           <div className="space-y-1.5">
             {examples.map((ex, i) => (
               <p key={i} className="text-xs text-muted-foreground/80 font-mono pl-3 border-l-2 border-accent-cyan/30 py-0.5">"{ex}"</p>
@@ -50,7 +51,7 @@ function FeatureCard({ icon: Icon, title, items, examples, limits }: {
       )}
       {limits && limits.length > 0 && (
         <div className="pt-3 border-t border-white/[0.06]">
-          <p className="text-[10px] uppercase tracking-widest text-destructive/80 font-bold mb-2 font-display">Limites MVP</p>
+          <p className="text-[10px] uppercase tracking-widest text-destructive/80 font-bold mb-2 font-display">{limitsLabel}</p>
           <ul className="space-y-1">
             {limits.map((l, i) => (
               <li key={i} className="text-xs text-muted-foreground/60 flex items-start gap-2">
@@ -64,18 +65,33 @@ function FeatureCard({ icon: Icon, title, items, examples, limits }: {
   );
 }
 
-const tocItems = [
-  { id: "what", label: "Qu'est-ce que RegBridge ?" },
-  { id: "architecture", label: "Architecture technique" },
-  { id: "tabs", label: "Fonctionnalités par onglet" },
-  { id: "finma-docs", label: "Documents FINMA indexés" },
-  { id: "api", label: "Endpoints API" },
-  { id: "stack", label: "Stack technique" },
-  { id: "roadmap", label: "Roadmap" },
-];
+const phaseColors = ["text-emerald-400", "text-primary", "text-accent-gold"];
 
 export default function About() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const tocItems = [
+    { id: "what", label: t("about.toc.what") },
+    { id: "architecture", label: t("about.toc.architecture") },
+    { id: "tabs", label: t("about.toc.tabs") },
+    { id: "finma-docs", label: t("about.toc.finmaDocs") },
+    { id: "api", label: t("about.toc.api") },
+    { id: "stack", label: t("about.toc.stack") },
+    { id: "roadmap", label: t("about.toc.roadmap") },
+  ];
+
+  const whatItems = t("about.what.items", { returnObjects: true }) as string[];
+  const finmaItems = t("about.tabs.finma.items", { returnObjects: true }) as string[];
+  const finmaExamples = t("about.tabs.finma.examples", { returnObjects: true }) as string[];
+  const finmaLimits = t("about.tabs.finma.limits", { returnObjects: true }) as string[];
+  const crossItems = t("about.tabs.cross.items", { returnObjects: true }) as string[];
+  const crossExamples = t("about.tabs.cross.examples", { returnObjects: true }) as string[];
+  const docsItems = t("about.tabs.docs.items", { returnObjects: true }) as string[];
+  const finmaDocsList = t("about.finmaDocs.items", { returnObjects: true }) as string[];
+  const apiItems = t("about.api.items", { returnObjects: true }) as string[][];
+  const stackItems = t("about.stack.items", { returnObjects: true }) as { label: string; value: string }[];
+  const roadmapPhases = t("about.roadmap.phases", { returnObjects: true }) as { version: string; subtitle: string; items: { done: boolean; text: string }[] }[];
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
@@ -95,22 +111,18 @@ export default function About() {
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
           <div className="flex-1">
-            <h1 className="text-base font-bold gradient-text font-display">RegBridge — Documentation</h1>
-            <p className="text-[9px] gradient-text-gold tracking-[0.12em] uppercase font-semibold">Guide complet</p>
+            <h1 className="text-base font-bold gradient-text font-display">{t("about.headerTitle")}</h1>
+            <p className="text-[9px] gradient-text-gold tracking-[0.12em] uppercase font-semibold">{t("about.headerSubtitle")}</p>
           </div>
         </div>
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-10 flex gap-10">
-        {/* Sidebar TOC — desktop only */}
+        {/* Sidebar TOC */}
         <aside className="hidden xl:block w-56 shrink-0 sticky top-20 self-start">
           <nav className="space-y-1">
             {tocItems.map((item) => (
-              <a
-                key={item.id}
-                href={`#${item.id}`}
-                className="block text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-lg hover:bg-secondary/50 transition-colors"
-              >
+              <a key={item.id} href={`#${item.id}`} className="block text-sm text-muted-foreground hover:text-foreground py-1.5 px-3 rounded-lg hover:bg-secondary/50 transition-colors">
                 {item.label}
               </a>
             ))}
@@ -119,22 +131,17 @@ export default function About() {
 
         {/* Main content */}
         <main className="flex-1 min-w-0 space-y-16">
-          {/* SECTION 1 — Qu'est-ce que RegBridge ? */}
+          {/* SECTION 1 */}
           <section>
-            <SectionTitle icon={Shield} title="Qu'est-ce que RegBridge ?" id="what" />
+            <SectionTitle icon={Shield} title={t("about.what.title")} id="what" />
             <motion.div {...fadeUp(0.1)} className="glass-card rounded-2xl p-6 border-gradient space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                <span className="text-foreground font-semibold">RegBridge</span> est un assistant IA de conformité réglementaire bancaire suisse, basé sur une architecture{" "}
-                <span className="text-accent-cyan font-semibold">RAG (Retrieval-Augmented Generation) dual-collection</span>.
+                <span className="text-foreground font-semibold">RegBridge</span> {t("about.what.desc1")}{" "}
+                <span className="text-accent-cyan font-semibold">{t("about.what.rag")}</span>.
               </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">Il permet à un établissement financier de :</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{t("about.what.desc2")}</p>
               <ul className="space-y-2.5">
-                {[
-                  "Interroger les circulaires FINMA en langage naturel",
-                  "Comparer ses procédures internes avec la réglementation",
-                  "Détecter automatiquement les écarts de conformité",
-                  "Obtenir des réponses sourcées et traçables",
-                ].map((item, i) => (
+                {whatItems.map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
                     <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan mt-1.5 shrink-0" />
                     <span>{item}</span>
@@ -144,9 +151,9 @@ export default function About() {
             </motion.div>
           </section>
 
-          {/* SECTION 2 — Architecture technique */}
+          {/* SECTION 2 */}
           <section>
-            <SectionTitle icon={Cpu} title="Architecture technique" id="architecture" />
+            <SectionTitle icon={Cpu} title={t("about.architecture.title")} id="architecture" />
             <motion.div {...fadeUp(0.1)} className="glass-card rounded-2xl p-6 border-gradient overflow-x-auto">
               <pre className="text-[11px] sm:text-xs font-mono text-muted-foreground leading-relaxed whitespace-pre overflow-x-auto">
 {`┌──────────────────────────────────────────────────┐
@@ -164,7 +171,7 @@ export default function About() {
 ┌──────────▼────────┐    ┌──────▼──────────────────┐
 │   QDRANT CLOUD    │    │     GROQ API             │
 │   Collection 1:   │    │     LLaMA 3.1 8B         │
-│   finma_docs      │    │     (génération réponse)  │
+│   finma_docs      │    │     (generation)          │
 │   Collection 2:   │    └─────────────────────────┘
 │   internal_docs   │
 │   (HuggingFace    │
@@ -174,80 +181,44 @@ export default function About() {
             </motion.div>
           </section>
 
-          {/* SECTION 3 — Fonctionnalités par onglet */}
+          {/* SECTION 3 */}
           <section>
-            <SectionTitle icon={Zap} title="Fonctionnalités par onglet" id="tabs" />
+            <SectionTitle icon={Zap} title={t("about.tabs.title")} id="tabs" />
             <div className="space-y-6">
               <FeatureCard
                 icon={MessageSquare}
-                title="Question FINMA"
-                items={[
-                  "Poser toute question sur les circulaires FINMA indexées dans Qdrant (collection finma_docs)",
-                  "Obtenir une réponse en langage naturel avec citations précises (PDF + numéro de page)",
-                  "Suggestions de questions rapides prédéfinies : KYC, Bâle III, Gouvernance, LBA, Reporting",
-                  "Historique des conversations persisté en session",
-                  "Nouvelle conversation à tout moment",
-                ]}
-                examples={[
-                  "Quelles sont les obligations KYC ?",
-                  "Quelles sont les exigences Bâle III ?",
-                  "Règles de gouvernance FINMA ?",
-                ]}
-                limits={[
-                  "Uniquement les circulaires déjà indexées",
-                  "Pas de mémoire inter-sessions",
-                  "Modèle limité à 8B paramètres (Groq free tier)",
-                ]}
+                title={t("about.tabs.finma.title")}
+                items={finmaItems}
+                examples={finmaExamples}
+                limits={finmaLimits}
+                examplesLabel={t("about.tabs.examples")}
+                limitsLabel={t("about.tabs.limitsMvp")}
               />
               <FeatureCard
                 icon={GitCompare}
-                title="Analyse croisée"
-                items={[
-                  "Comparer SIMULTANÉMENT finma_docs et internal_docs",
-                  "Détecter les écarts de conformité entre les deux collections",
-                  "Citer les sources des deux côtés dans chaque réponse",
-                  "Identifier les lacunes dans les procédures internes",
-                  "Formuler des recommandations actionnables",
-                ]}
-                examples={[
-                  "Notre procédure KYC est-elle conforme FINMA ?",
-                  "Notre gouvernance des risques respecte-t-elle la Circ. 2023/1 ?",
-                  "Notre politique données est-elle conforme LPD ?",
-                ]}
+                title={t("about.tabs.cross.title")}
+                items={crossItems}
+                examples={crossExamples}
+                examplesLabel={t("about.tabs.examples")}
+                limitsLabel={t("about.tabs.limitsMvp")}
               />
               <FeatureCard
                 icon={FolderOpen}
-                title="Documents internes"
-                items={[
-                  "Uploader des PDF de procédures internes",
-                  "Sélectionner une catégorie : Procédure interne, Règlement interne, Autre",
-                  "Indexation automatique dans Qdrant avec chunking",
-                  "Bibliothèque avec filtres par catégorie, tri par date, recherche texte",
-                  "Modification de catégorie inline et suppression",
-                  "Audit trail des modifications",
-                ]}
+                title={t("about.tabs.docs.title")}
+                items={docsItems}
+                examplesLabel={t("about.tabs.examples")}
+                limitsLabel={t("about.tabs.limitsMvp")}
               />
             </div>
           </section>
 
-          {/* SECTION 4 — Documents FINMA indexés */}
+          {/* SECTION 4 */}
           <section>
-            <SectionTitle icon={Database} title="Documents FINMA indexés (MVP)" id="finma-docs" />
+            <SectionTitle icon={Database} title={t("about.finmaDocs.title")} id="finma-docs" />
             <motion.div {...fadeUp(0.1)} className="glass-card rounded-2xl p-6 border-gradient">
               <div className="space-y-3">
-                {[
-                  "Circ.-FINMA 2023/1 — Risques opérationnels",
-                  "Circ.-FINMA 2016/7 — Risques de crédit",
-                  "Circ.-FINMA 2025/2 — (à confirmer)",
-                  "OBA-FINMA — Ordonnance blanchiment",
-                  "ASB Convention CDB 2020",
-                  "SBA Agreement CDB 2020",
-                ].map((doc, i) => (
-                  <motion.div
-                    key={i}
-                    {...fadeUp(0.05 * i)}
-                    className="flex items-center gap-3 text-sm py-2 px-3 rounded-xl hover:bg-secondary/30 transition-colors"
-                  >
+                {finmaDocsList.map((doc, i) => (
+                  <motion.div key={i} {...fadeUp(0.05 * i)} className="flex items-center gap-3 text-sm py-2 px-3 rounded-xl hover:bg-secondary/30 transition-colors">
                     <div className="w-2 h-2 rounded-full bg-accent-gold shrink-0" />
                     <span className="text-muted-foreground">{doc}</span>
                   </motion.div>
@@ -256,27 +227,20 @@ export default function About() {
             </motion.div>
           </section>
 
-          {/* SECTION 5 — Endpoints API */}
+          {/* SECTION 5 */}
           <section>
-            <SectionTitle icon={Server} title="Endpoints API disponibles" id="api" />
+            <SectionTitle icon={Server} title={t("about.api.title")} id="api" />
             <motion.div {...fadeUp(0.1)} className="glass-card rounded-2xl p-6 border-gradient overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left border-b border-white/[0.06]">
-                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">Méthode</th>
-                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">Endpoint</th>
-                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">Description</th>
+                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">{t("about.api.method")}</th>
+                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">{t("about.api.endpoint")}</th>
+                    <th className="pb-3 text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display">{t("about.api.description")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.04]">
-                  {[
-                    ["GET", "/health", "Vérification statut serveur"],
-                    ["POST", "/query", "Question FINMA simple"],
-                    ["POST", "/cross-query", "Analyse croisée dual-collection"],
-                    ["POST", "/upload", "Upload et indexation PDF"],
-                    ["GET", "/documents", "Liste documents indexés"],
-                    ["DELETE", "/documents/{id}", "Suppression document"],
-                  ].map(([method, endpoint, desc], i) => (
+                  {apiItems.map(([method, endpoint, desc], i) => (
                     <tr key={i} className="hover:bg-secondary/20 transition-colors">
                       <td className="py-2.5 pr-4">
                         <span className={`text-xs font-mono font-bold ${method === "GET" ? "text-emerald-400" : method === "POST" ? "text-primary" : "text-destructive"}`}>
@@ -292,20 +256,11 @@ export default function About() {
             </motion.div>
           </section>
 
-          {/* SECTION 6 — Stack technique */}
+          {/* SECTION 6 */}
           <section>
-            <SectionTitle icon={Globe} title="Stack technique complète" id="stack" />
+            <SectionTitle icon={Globe} title={t("about.stack.title")} id="stack" />
             <motion.div {...fadeUp(0.1)} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { label: "Frontend", value: "React / Lovable / Tailwind CSS" },
-                { label: "Backend", value: "Python / FastAPI / LangChain" },
-                { label: "LLM", value: "Groq API — LLaMA 3.1 8B Instant" },
-                { label: "Embeddings", value: "HuggingFace (all-MiniLM-L6-v2)" },
-                { label: "Vector DB", value: "Qdrant Cloud (dual-collection)" },
-                { label: "Tunnel", value: "Ngrok (dev) / URL configurable" },
-                { label: "Auth", value: "Session-based (Paramètres)" },
-                { label: "i18n", value: "i18next — EN / DE / FR / IT" },
-              ].map((item, i) => (
+              {stackItems.map((item, i) => (
                 <div key={i} className="glass-card rounded-xl px-4 py-3 border-gradient flex items-baseline gap-3">
                   <span className="text-[10px] uppercase tracking-widest text-accent-gold font-bold font-display whitespace-nowrap">{item.label}</span>
                   <span className="text-xs text-muted-foreground">{item.value}</span>
@@ -314,51 +269,14 @@ export default function About() {
             </motion.div>
           </section>
 
-          {/* SECTION 7 — Roadmap */}
+          {/* SECTION 7 */}
           <section>
-            <SectionTitle icon={Lock} title="Roadmap" id="roadmap" />
+            <SectionTitle icon={Lock} title={t("about.roadmap.title")} id="roadmap" />
             <div className="space-y-6">
-              {[
-                {
-                  version: "v1.0 MVP",
-                  subtitle: "Actuel",
-                  color: "text-emerald-400",
-                  items: [
-                    { done: true, text: "RAG FINMA mono-collection" },
-                    { done: true, text: "Upload documents internes" },
-                    { done: true, text: "Analyse croisée dual-collection" },
-                    { done: true, text: "Interface multilingue 4 langues" },
-                    { done: true, text: "Bibliothèque de documents" },
-                  ],
-                },
-                {
-                  version: "v2.0",
-                  subtitle: "Si victoire GenAI Zürich 2026",
-                  color: "text-primary",
-                  items: [
-                    { done: false, text: "DORA — Digital Operational Resilience Act" },
-                    { done: false, text: "LPD complète + RGPD" },
-                    { done: false, text: "Basel III/IV intégration" },
-                    { done: false, text: "Mémoire inter-sessions" },
-                    { done: false, text: "Export rapport PDF de conformité" },
-                    { done: false, text: "Multi-utilisateurs avec rôles" },
-                  ],
-                },
-                {
-                  version: "v3.0",
-                  subtitle: "Vision long terme",
-                  color: "text-accent-gold",
-                  items: [
-                    { done: false, text: "40+ référentiels réglementaires" },
-                    { done: false, text: "Alertes automatiques nouvelles circulaires" },
-                    { done: false, text: "Intégration core banking" },
-                    { done: false, text: "Dashboard analytics conformité" },
-                  ],
-                },
-              ].map((phase, pi) => (
+              {roadmapPhases.map((phase, pi) => (
                 <motion.div key={pi} {...fadeUp(0.1 * pi)} className="glass-card rounded-2xl p-6 border-gradient">
                   <div className="flex items-baseline gap-3 mb-4">
-                    <span className={`text-lg font-bold font-display ${phase.color}`}>{phase.version}</span>
+                    <span className={`text-lg font-bold font-display ${phaseColors[pi] || "text-foreground"}`}>{phase.version}</span>
                     <span className="text-xs text-muted-foreground">— {phase.subtitle}</span>
                   </div>
                   <ul className="space-y-2">
@@ -378,7 +296,6 @@ export default function About() {
             </div>
           </section>
 
-          {/* Footer */}
           <div className="text-center pt-8 pb-4">
             <p className="text-[10px] text-muted-foreground/30 font-mono">RegBridge v1.0 · Documentation</p>
           </div>
