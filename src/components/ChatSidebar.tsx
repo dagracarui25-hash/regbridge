@@ -41,30 +41,30 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border/50">
+    <Sidebar collapsible="icon" className="border-r border-white/[0.06]">
       <SidebarHeader className="p-3">
         {!collapsed && (
-          <div className="flex items-center gap-2 mb-3 px-1">
-            <div className="w-7 h-7 rounded-lg gradient-primary flex items-center justify-center">
-              <Shield className="w-3.5 h-3.5 text-primary-foreground" />
+          <div className="flex items-center gap-2.5 mb-4 px-1">
+            <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center glow-sm">
+              <Shield className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="text-sm font-semibold gradient-text">RegBridge</span>
+            <span className="text-sm font-bold gradient-text font-display tracking-tight">RegBridge</span>
           </div>
         )}
         <Button
           onClick={onCreate}
           size={collapsed ? "icon" : "sm"}
-          className="w-full gradient-primary text-primary-foreground hover:opacity-90 glow-sm rounded-lg text-xs font-medium"
+          className="w-full gradient-primary text-primary-foreground hover:opacity-90 glow-sm rounded-xl text-xs font-semibold h-10 transition-all duration-200 hover:scale-[1.02]"
         >
           <Plus className="h-4 w-4" />
-          {!collapsed && <span className="ml-1.5">{t("chat.newConversation")}</span>}
+          {!collapsed && <span className="ml-1.5 font-display">{t("chat.newConversation")}</span>}
         </Button>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-mono">
+            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.12em] gradient-text-gold font-semibold font-display px-3">
               {t("chat.history")}
             </SidebarGroupLabel>
           )}
@@ -79,9 +79,13 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
                       isActive={isActive}
                       onClick={() => onSelect(conv.id)}
                       tooltip={conv.title}
-                      className="group/item"
+                      className={`group/item transition-all duration-150 rounded-lg ${
+                        isActive
+                          ? "bg-secondary border-l-2 border-l-primary"
+                          : "hover:bg-secondary/50 border-l-2 border-l-transparent hover:border-l-primary/40"
+                      }`}
                     >
-                      <MessageSquare className="h-4 w-4 shrink-0" />
+                      <MessageSquare className={`h-4 w-4 shrink-0 ${isActive ? "text-primary" : ""}`} />
                       {!collapsed && (
                         <div className="flex flex-col min-w-0 flex-1">
                           <span className="truncate text-xs font-medium">{conv.title}</span>
@@ -98,7 +102,7 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
                           e.stopPropagation();
                           onDelete(conv.id);
                         }}
-                        className="hover:text-destructive"
+                        className="hover:text-destructive transition-colors"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </SidebarMenuAction>

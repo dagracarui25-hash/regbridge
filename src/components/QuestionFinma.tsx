@@ -82,12 +82,12 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
 
         <div className="flex-1 flex flex-col relative overflow-hidden">
           <div className="absolute top-3 left-3 z-10">
-            <SidebarTrigger className="h-8 w-8 text-muted-foreground hover:text-foreground" />
+            <SidebarTrigger className="h-8 w-8 text-muted-foreground hover:text-foreground transition-colors" />
           </div>
 
           <div className="flex-1 overflow-hidden">
             <div ref={scrollRef} className="h-full overflow-y-auto px-4 sm:px-8 lg:px-16 py-6 pb-8">
-              <div className="max-w-full space-y-4">
+              <div className="max-w-full space-y-5">
                 <AnimatePresence initial={false}>
                   {messages.map((msg) => (
                     <motion.div
@@ -99,33 +99,33 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                     >
                       {msg.role === "agent" && (
                         <div className="flex-shrink-0 mt-1 mr-3">
-                          <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                            <Sparkles className="w-4 h-4 text-primary" />
+                          <div className="w-9 h-9 rounded-xl glass-card flex items-center justify-center border-gradient glow-cyan">
+                            <Sparkles className="w-4 h-4 text-accent-cyan" />
                           </div>
                         </div>
                       )}
                       <div
-                        className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                        className={`text-sm leading-relaxed ${
                           msg.role === "user"
-                            ? "max-w-[80%] gradient-primary text-primary-foreground rounded-br-sm glow-sm"
-                            : "max-w-full rounded-bl-sm glass"
+                            ? "max-w-[80%] gradient-primary text-primary-foreground rounded-[18px] rounded-br-[4px] px-5 py-3.5 glow-sm shadow-lg shadow-primary/10"
+                            : "max-w-full rounded-[18px] rounded-bl-[4px] glass-card px-5 py-3.5"
                         }`}
                       >
                         {msg.role === "agent" ? (
                           <FormattedMessage text={msg.text} />
                         ) : (
-                          <p className="whitespace-pre-wrap">{msg.text}</p>
+                          <p className="whitespace-pre-wrap font-medium">{msg.text}</p>
                         )}
                         {msg.role === "agent" && msg.sources && msg.sources.length > 0 && (
-                          <div className="mt-3 pt-2.5 border-t border-white/[0.06]">
-                            <p className="text-[11px] font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
+                          <div className="mt-3 pt-3 border-t border-accent-gold/20">
+                            <p className="text-[10px] font-bold gradient-text-gold mb-2 uppercase tracking-[0.12em] font-display">
                               📄 {t("chat.sources")}
                             </p>
-                            <ul className="space-y-1">
+                            <ul className="space-y-1.5">
                               {msg.sources.map((src, i) => (
                                 <li
                                   key={i}
-                                  className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30 break-all whitespace-normal"
+                                  className="text-xs text-muted-foreground/80 font-mono pl-3 border-l-2 border-accent-cyan/30 break-all whitespace-normal hover:text-foreground hover:border-accent-cyan/60 transition-colors cursor-default py-0.5"
                                 >
                                   {src}
                                 </li>
@@ -147,24 +147,24 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                       className="flex justify-start"
                     >
                       <div className="flex-shrink-0 mt-1 mr-3">
-                        <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                        <div className="w-9 h-9 rounded-xl glass-card flex items-center justify-center border-gradient">
+                          <Sparkles className="w-4 h-4 text-accent-cyan animate-pulse" />
                         </div>
                       </div>
-                      <div className="glass rounded-2xl rounded-bl-sm px-5 py-3.5">
+                      <div className="glass-card rounded-[18px] rounded-bl-[4px] px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex gap-1.5">
+                          <div className="flex gap-2">
                             {[0, 1, 2].map((i) => (
                               <span
                                 key={i}
-                                className="w-2 h-2 rounded-full gradient-primary inline-block"
-                                style={{ animation: `pulse-dot 1.4s ease-in-out ${i * 0.16}s infinite` }}
+                                className="w-2 h-2 rounded-full bg-accent-cyan inline-block"
+                                style={{ animation: `wave-dot 1.4s ease-in-out ${i * 0.15}s infinite` }}
                               />
                             ))}
                           </div>
                           <span className="text-xs text-muted-foreground font-medium">{t("chat.analyzing")}</span>
                         </div>
-                        <div className="mt-2 h-0.5 w-32 rounded-full overflow-hidden bg-secondary">
+                        <div className="mt-2.5 h-0.5 w-36 rounded-full overflow-hidden bg-secondary">
                           <div className="h-full animate-shimmer rounded-full" />
                         </div>
                       </div>
@@ -179,7 +179,7 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ delay: 0.3 }}
-                      className="flex flex-wrap gap-2 pt-4"
+                      className="flex flex-wrap gap-2.5 pt-4"
                     >
                       {SUGGESTIONS.map((s, i) => (
                         <motion.button
@@ -188,7 +188,7 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: 0.4 + i * 0.1 }}
                           onClick={() => handleSend(s)}
-                          className="glass hover:bg-primary/10 text-xs text-muted-foreground hover:text-foreground px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer border border-white/[0.06] hover:border-primary/30"
+                          className="glass-card hover:bg-primary/10 text-xs text-muted-foreground hover:text-foreground px-4 py-2.5 rounded-xl transition-all duration-200 cursor-pointer border border-white/[0.06] hover:border-primary/30 hover:glow-sm"
                         >
                           {s}
                         </motion.button>
@@ -200,9 +200,10 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
             </div>
           </div>
 
-          <div className="flex-shrink-0 glass-strong px-4 py-3">
+          {/* Chat input bar */}
+          <div className="flex-shrink-0 glass-strong border-t border-white/[0.06] px-4 py-3">
             <div className="max-w-full">
-              <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
+              <div className="flex gap-3 items-center glass-card rounded-2xl px-4 py-2 focus-within:glow-input-focus transition-all duration-300">
                 <input
                   ref={inputRef}
                   value={input}
@@ -210,13 +211,13 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                   onKeyDown={handleKeyDown}
                   placeholder={isServerOffline ? t("chat.serverOfflinePlaceholder") : t("chat.placeholder")}
                   disabled={isLoading || isServerOffline}
-                  className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/60 py-2.5 font-sans disabled:opacity-50"
+                  className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/50 py-2.5 font-sans disabled:opacity-40"
                 />
                 <Button
                   onClick={() => handleSend()}
                   disabled={isLoading || isServerOffline || !input.trim()}
                   size="sm"
-                  className="gradient-primary rounded-lg h-9 px-4 text-primary-foreground hover:opacity-90 transition-opacity glow-sm disabled:opacity-30 disabled:shadow-none"
+                  className="gradient-primary rounded-xl h-10 w-10 p-0 text-primary-foreground hover:opacity-90 hover:scale-[1.08] transition-all duration-200 glow-sm disabled:opacity-20 disabled:shadow-none disabled:scale-100"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

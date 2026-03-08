@@ -1,5 +1,5 @@
 import { useState, KeyboardEvent } from "react";
-import { Send, Loader2, Building2, Landmark } from "lucide-react";
+import { Send, Loader2, Building2, Landmark, GitCompare, Scale, FileSearch } from "lucide-react";
 import { FormattedMessage } from "@/components/FormattedMessage";
 import { Button } from "@/components/ui/button";
 import { getApiUrl } from "@/hooks/useApiUrl";
@@ -15,15 +15,22 @@ interface AnalyseCroiseeProps {
   onError: () => void;
 }
 
+const SUGGESTION_CARDS = [
+  { icon: Scale, key: "Comparer KYC interne vs FINMA", query: "Compare les obligations KYC internes avec les exigences FINMA" },
+  { icon: FileSearch, key: "Analyser la conformité LBA", query: "Analyse la conformité de nos procédures avec la LBA" },
+  { icon: GitCompare, key: "Vérifier les procédures CDB", query: "Vérifie la conformité de nos procédures CDB avec les circulaires FINMA" },
+];
+
 export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CrossResult | null>(null);
 
-  const handleSend = async () => {
-    const trimmed = input.trim();
+  const handleSend = async (query?: string) => {
+    const trimmed = (query || input).trim();
     if (!trimmed || loading) return;
+    if (!query) setInput("");
     setLoading(true);
     setResult(null);
 
@@ -69,8 +76,8 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                 exit={{ opacity: 0 }}
                 className="flex justify-center py-20"
               >
-                <div className="glass rounded-2xl px-6 py-4 flex items-center gap-3">
-                  <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                <div className="glass-card rounded-2xl px-6 py-4 flex items-center gap-3 border-gradient">
+                  <Loader2 className="h-5 w-5 text-accent-cyan animate-spin" />
                   <span className="text-sm text-muted-foreground">{t("cross.loading")}</span>
                 </div>
               </motion.div>
@@ -83,10 +90,10 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              <div className="glass rounded-2xl p-5 space-y-3">
+              <div className="glass-card rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
                   <Landmark className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-bold text-foreground">{t("cross.finmaTitle")}</h3>
+                  <h3 className="text-sm font-bold text-foreground font-display">{t("cross.finmaTitle")}</h3>
                 </div>
                 {result.finma ? (
                   <>
@@ -94,11 +101,11 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                       <FormattedMessage text={result.finma.reponse} />
                     </div>
                     {result.finma.sources?.length > 0 && (
-                      <div className="pt-2 border-t border-white/[0.06]">
-                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 {t("chat.sources")}</p>
+                      <div className="pt-2 border-t border-accent-gold/20">
+                        <p className="text-[10px] font-bold gradient-text-gold mb-1.5 uppercase tracking-[0.12em] font-display">📄 {t("chat.sources")}</p>
                         <ul className="space-y-1">
                           {formatSources(result.finma.sources).map((s, i) => (
-                            <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30">{s}</li>
+                            <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-3 border-l-2 border-accent-cyan/30">{s}</li>
                           ))}
                         </ul>
                       </div>
@@ -109,10 +116,10 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                 )}
               </div>
 
-              <div className="glass rounded-2xl p-5 space-y-3">
+              <div className="glass-card rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
-                  <Building2 className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-bold text-foreground">{t("cross.internalTitle")}</h3>
+                  <Building2 className="h-5 w-5 text-accent-cyan" />
+                  <h3 className="text-sm font-bold text-foreground font-display">{t("cross.internalTitle")}</h3>
                 </div>
                 {result.interne && result.interne.reponse ? (
                   <>
@@ -120,11 +127,11 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                       <FormattedMessage text={result.interne.reponse} />
                     </div>
                     {result.interne.sources?.length > 0 && (
-                      <div className="pt-2 border-t border-white/[0.06]">
-                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 {t("chat.sources")}</p>
+                      <div className="pt-2 border-t border-accent-gold/20">
+                        <p className="text-[10px] font-bold gradient-text-gold mb-1.5 uppercase tracking-[0.12em] font-display">📄 {t("chat.sources")}</p>
                         <ul className="space-y-1">
                           {formatSources(result.interne.sources).map((s, i) => (
-                            <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30">{s}</li>
+                            <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-3 border-l-2 border-accent-cyan/30">{s}</li>
                           ))}
                         </ul>
                       </div>
@@ -138,35 +145,64 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
           )}
 
           {!result && !loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center space-y-3">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-                  <span className="text-2xl">🔀</span>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center justify-center py-16"
+            >
+              {/* Floating icon */}
+              <div className="animate-float mb-6">
+                <div className="w-20 h-20 rounded-2xl glass-card border-gradient flex items-center justify-center glow-md">
+                  <GitCompare className="w-9 h-9 text-accent-cyan" />
                 </div>
-                <h3 className="text-base font-semibold text-foreground">{t("cross.title")}</h3>
-                <p className="text-sm text-muted-foreground max-w-md">{t("cross.description")}</p>
               </div>
-            </div>
+
+              {/* Title with gradient */}
+              <h3 className="text-2xl font-bold gradient-text font-display mb-2">{t("cross.title")}</h3>
+              <p className="text-sm text-muted-foreground max-w-md text-center leading-relaxed mb-8">{t("cross.description")}</p>
+
+              {/* Suggestion cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl">
+                {SUGGESTION_CARDS.map((card, i) => (
+                  <motion.button
+                    key={card.key}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    onClick={() => {
+                      setInput(card.query);
+                      handleSend(card.query);
+                    }}
+                    className="glass-card rounded-xl p-4 text-left hover:bg-primary/10 hover:border-primary/30 border border-white/[0.06] transition-all duration-200 group cursor-pointer"
+                  >
+                    <card.icon className="h-5 w-5 text-accent-cyan mb-2 group-hover:text-primary transition-colors" />
+                    <p className="text-xs font-medium text-foreground/80 group-hover:text-foreground transition-colors">{card.key}</p>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
           )}
         </div>
       </div>
 
-      <div className="flex-shrink-0 glass-strong px-4 py-3">
+      {/* Input bar */}
+      <div className="flex-shrink-0 glass-strong border-t border-white/[0.06] px-4 py-3">
         <div className="max-w-5xl mx-auto">
-          <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
+          <div className="flex gap-3 items-center glass-card rounded-2xl px-4 py-2 focus-within:glow-input-focus transition-all duration-300">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t("cross.placeholder")}
               disabled={loading}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/60 py-2.5 font-sans disabled:opacity-50"
+              className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/50 py-2.5 font-sans disabled:opacity-40"
             />
             <Button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={loading || !input.trim()}
               size="sm"
-              className="gradient-primary rounded-lg h-9 px-4 text-primary-foreground hover:opacity-90 transition-opacity glow-sm disabled:opacity-30 disabled:shadow-none"
+              className="gradient-primary rounded-xl h-10 w-10 p-0 text-primary-foreground hover:opacity-90 hover:scale-[1.08] transition-all duration-200 glow-sm disabled:opacity-20 disabled:shadow-none disabled:scale-100"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
