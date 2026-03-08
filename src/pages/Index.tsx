@@ -60,31 +60,31 @@ const Index = () => {
       {/* Tabs */}
       <Tabs defaultValue="question" className="flex-1 flex flex-col overflow-hidden relative z-0">
         <div className="flex-shrink-0 glass-strong border-b border-border/50">
-          <div className="max-w-5xl mx-auto px-4">
-            <TabsList className="bg-transparent h-auto p-0 gap-0">
+          <div className="max-w-5xl mx-auto px-2 sm:px-4">
+            <TabsList className="bg-transparent h-auto p-0 gap-0 w-full">
               <TabsTrigger
                 value="question"
-                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-4 py-2.5 text-sm gap-2"
+                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
-                <MessageSquare className="h-4 w-4" />
+                <MessageSquare className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Question FINMA</span>
-                <span className="sm:hidden">💬</span>
+                <span className="sm:hidden truncate">FINMA</span>
               </TabsTrigger>
               <TabsTrigger
                 value="croisee"
-                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-4 py-2.5 text-sm gap-2"
+                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
-                <GitCompare className="h-4 w-4" />
+                <GitCompare className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Analyse croisée</span>
-                <span className="sm:hidden">🔀</span>
+                <span className="sm:hidden truncate">Croisée</span>
               </TabsTrigger>
               <TabsTrigger
                 value="documents"
-                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-4 py-2.5 text-sm gap-2"
+                className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
-                <FolderOpen className="h-4 w-4" />
+                <FolderOpen className="h-4 w-4 shrink-0" />
                 <span className="hidden sm:inline">Documents internes</span>
-                <span className="sm:hidden">📁</span>
+                <span className="sm:hidden truncate">Documents</span>
               </TabsTrigger>
             </TabsList>
           </div>
