@@ -55,6 +55,7 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
   const { isAuthenticated, authenticate, validateSession } = useDocumentAccess();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<string>("Toutes");
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadResult, setUploadResult] = useState<{ ok: boolean; message: string } | null>(null);
@@ -319,7 +320,7 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
 
         {/* Document library */}
         <div className="glass rounded-2xl p-6 space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
               Bibliothèque de documents
@@ -329,16 +330,28 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
                 </span>
               )}
             </h3>
-            <Button
-              onClick={fetchDocuments}
-              disabled={loadingDocs}
-              variant="ghost"
-              size="sm"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <RefreshCw className={`h-4 w-4 mr-1 ${loadingDocs ? "animate-spin" : ""}`} />
-              Rafraîchir
-            </Button>
+            <div className="flex items-center gap-2">
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="bg-secondary/50 border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
+              >
+                <option value="Toutes">Toutes les catégories</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              <Button
+                onClick={fetchDocuments}
+                disabled={loadingDocs}
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <RefreshCw className={`h-4 w-4 mr-1 ${loadingDocs ? "animate-spin" : ""}`} />
+                Rafraîchir
+              </Button>
+            </div>
           </div>
 
           {loadingDocs && documents.length === 0 ? (
@@ -351,7 +364,9 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
             </div>
           ) : (
             <div className="space-y-2">
-              {documents.map((doc) => (
+              {documents
+                .filter((doc) => filterCategory === "Toutes" || doc.categorie === filterCategory)
+                .map((doc) => (
                 <motion.div
                   key={doc.nom_fichier}
                   layout
