@@ -61,6 +61,7 @@
     "newConversation": "Neues Gespräch",
     "history": "Verlauf",
     "placeholder": "Stellen Sie Ihre FINMA-Frage...",
+    "serverOfflinePlaceholder": "Server offline — URL in Einstellungen konfigurieren",
     "analyzing": "Analyse läuft",
     "sources": "Quellen",
     "today": "Heute",

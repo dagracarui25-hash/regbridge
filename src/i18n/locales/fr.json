@@ -61,6 +61,7 @@
     "newConversation": "Nouvelle conversation",
     "history": "Historique",
     "placeholder": "Posez votre question FINMA...",
+    "serverOfflinePlaceholder": "Serveur hors ligne — configurez l'URL dans Paramètres",
     "analyzing": "Analyse en cours",
     "sources": "Sources",
     "today": "Aujourd'hui",

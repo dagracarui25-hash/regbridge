@@ -49,13 +49,56 @@ function loadConversations(): { conversations: Conversation[]; activeId: string 
   return { conversations: [initial], activeId: initial.id };
 }
 
+async function checkServerHealth(): Promise<boolean> {
+  try {
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 5000);
+    const res = await fetch(`${getApiUrl()}/`, {
+      method: "GET",
+      headers: { "ngrok-skip-browser-warning": "69420" },
+      signal: ctrl.signal,
+    });
+    clearTimeout(timeout);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  retries = 1
+): Promise<Response> {
+  const ctrl = new AbortController();
+  const timeout = setTimeout(() => ctrl.abort(), 30000);
+  
+  try {
+    const res = await fetch(url, { ...options, signal: ctrl.signal });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error("HTTP error");
+    return res;
+  } catch (error) {
+    clearTimeout(timeout);
+    if (retries > 0) {
+      // Wait 1 second before retry
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return fetchWithRetry(url, options, retries - 1);
+    }
+    throw error;
+  }
+}
+
 interface UseConversationsOptions {
   onError?: () => void;
+  onServerOffline?: () => void;
+  onServerOnline?: () => void;
 }
 
 export function useConversations(options: UseConversationsOptions = {}) {
   const [data, setData] = useState(loadConversations);
   const [isLoading, setIsLoading] = useState(false);
+  const [isServerOffline, setIsServerOffline] = useState(false);
   const nextId = useRef(100);
 
   const { conversations, activeId } = data;
@@ -64,6 +107,16 @@ export function useConversations(options: UseConversationsOptions = {}) {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }, [data]);
+
+  // Check server health on mount
+  useEffect(() => {
+    checkServerHealth().then((isOnline) => {
+      setIsServerOffline(!isOnline);
+      if (!isOnline) {
+        options.onServerOffline?.();
+      }
+    });
+  }, []);
 
   const setActiveId = useCallback((id: string) => {
     setData((prev) => ({ ...prev, activeId: id }));
@@ -96,6 +149,18 @@ export function useConversations(options: UseConversationsOptions = {}) {
       const trimmed = text.trim();
       if (!trimmed || isLoadingRef.current) return;
 
+      // Health check before sending
+      const isOnline = await checkServerHealth();
+      if (!isOnline) {
+        setIsServerOffline(true);
+        options.onServerOffline?.();
+        return;
+      }
+      
+      // Server is online, clear any previous offline state
+      setIsServerOffline(false);
+      options.onServerOnline?.();
+
       const userMsg: Message = { id: nextId.current++, role: "user", text: trimmed };
 
       setData((prev) => ({
@@ -116,20 +181,14 @@ export function useConversations(options: UseConversationsOptions = {}) {
       isLoadingRef.current = true;
 
       try {
-        const ctrl = new AbortController();
-        const timeout = setTimeout(() => ctrl.abort(), 30000);
-        const res = await fetch(`${getApiUrl()}/question`, {
+        const res = await fetchWithRetry(`${getApiUrl()}/question`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "69420",
           },
           body: JSON.stringify({ question: trimmed }),
-          signal: ctrl.signal,
         });
-        clearTimeout(timeout);
-
-        if (!res.ok) throw new Error("HTTP error");
 
         const json = await res.json();
         const sources = (json.sources || []).map(
@@ -149,18 +208,10 @@ export function useConversations(options: UseConversationsOptions = {}) {
           ),
         }));
       } catch {
-        options.onError?.();
-        const errorMsg: Message = {
-          id: nextId.current++,
-          role: "agent",
-          text: "⚠️ Serveur indisponible.",
-        };
-        setData((prev) => ({
-          ...prev,
-          conversations: prev.conversations.map((c) =>
-            c.id === prev.activeId ? { ...c, messages: [...c.messages, errorMsg], updatedAt: Date.now() } : c,
-          ),
-        }));
+        // Server went offline during request
+        setIsServerOffline(true);
+        options.onServerOffline?.();
+        // Don't add error message to chat - just show banner
       } finally {
         setIsLoading(false);
         isLoadingRef.current = false;
@@ -169,14 +220,27 @@ export function useConversations(options: UseConversationsOptions = {}) {
     [options],
   );
 
+  const recheckServer = useCallback(async () => {
+    const isOnline = await checkServerHealth();
+    setIsServerOffline(!isOnline);
+    if (isOnline) {
+      options.onServerOnline?.();
+    } else {
+      options.onServerOffline?.();
+    }
+    return isOnline;
+  }, [options]);
+
   return {
     conversations,
     activeConversation,
     activeId,
     isLoading,
+    isServerOffline,
     setActiveId,
     createConversation,
     deleteConversation,
     sendMessage,
+    recheckServer,
   };
 }
