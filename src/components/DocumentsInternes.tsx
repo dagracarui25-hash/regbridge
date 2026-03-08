@@ -88,10 +88,13 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
     setIsDragging(false);
     dragCounter.current = 0;
     const file = e.dataTransfer.files?.[0];
-    if (file && file.type === "application/pdf") {
-      setSelectedFile(file);
-      setUploadResult(null);
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      setUploadResult({ ok: false, message: "❌ Format non supporté. Seuls les fichiers PDF sont acceptés." });
+      return;
     }
+    setSelectedFile(file);
+    setUploadResult(null);
   };
 
   const fetchDocuments = useCallback(async () => {
