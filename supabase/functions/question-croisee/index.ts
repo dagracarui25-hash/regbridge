@@ -12,16 +12,9 @@ interface QdrantSearchResult {
   payload?: Record<string, unknown>;
 }
 
-/** Get vector size for a collection */
-async function getCollectionVectorSize(
-  qdrantUrl: string,
-  apiKey: string,
-  collection: string
-): Promise<number> {
+async function getCollectionVectorSize(qdrantUrl: string, apiKey: string, collection: string): Promise<number> {
   try {
-    const res = await fetch(`${qdrantUrl}/collections/${collection}`, {
-      headers: { "api-key": apiKey },
-    });
+    const res = await fetch(`${qdrantUrl}/collections/${collection}`, { headers: { "api-key": apiKey } });
     if (res.ok) {
       const data = await res.json();
       const config = data.result?.config?.params?.vectors;
@@ -37,31 +30,17 @@ async function getCollectionVectorSize(
   return 384;
 }
 
-/** Generate embedding for a query using Lovable AI gateway */
-async function generateQueryEmbedding(
-  text: string,
-  apiKey: string,
-  targetSize: number
-): Promise<number[]> {
-  // Try the embeddings endpoint first
+async function generateQueryEmbedding(text: string, apiKey: string, targetSize: number): Promise<number[]> {
   try {
     const response = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "text-embedding-3-small",
-        input: [text],
-      }),
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "text-embedding-3-small", input: [text] }),
     });
-
     if (response.ok) {
       const data = await response.json();
       let embedding = data.data?.[0]?.embedding;
       if (embedding) {
-        // Resize to match collection
         if (embedding.length > targetSize) embedding = embedding.slice(0, targetSize);
         while (embedding.length < targetSize) embedding.push(0);
         return embedding;
@@ -71,27 +50,19 @@ async function generateQueryEmbedding(
     console.log("Embeddings endpoint failed, using Gemini fallback:", e);
   }
 
-  // Fallback: use Gemini to generate pseudo-embedding
   try {
     const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-lite",
         messages: [
-          {
-            role: "system",
-            content: `You are an embedding generator. Generate a ${targetSize}-dimensional normalized float vector that semantically represents the input text. Output ONLY a JSON array of ${targetSize} floating point numbers between -1 and 1. No explanation.`,
-          },
+          { role: "system", content: `Generate a ${targetSize}-dimensional normalized float vector. Output ONLY a JSON array of ${targetSize} floats between -1 and 1.` },
           { role: "user", content: text.slice(0, 500) },
         ],
         stream: false,
       }),
     });
-
     if (resp.ok) {
       const d = await resp.json();
       const content = d.choices?.[0]?.message?.content || "";
@@ -108,30 +79,14 @@ async function generateQueryEmbedding(
   } catch (e) {
     console.error("Gemini embedding fallback failed:", e);
   }
-
-  // Last resort: random vector (bad quality but won't crash)
   return Array.from({ length: targetSize }, () => Math.random() * 2 - 1);
 }
 
-/** Vector search in Qdrant */
-async function searchQdrant(
-  qdrantUrl: string,
-  apiKey: string,
-  collection: string,
-  queryVector: number[],
-  limit = 5
-): Promise<QdrantSearchResult[]> {
+async function searchQdrant(qdrantUrl: string, apiKey: string, collection: string, queryVector: number[], limit = 5): Promise<QdrantSearchResult[]> {
   const res = await fetch(`${qdrantUrl}/collections/${collection}/points/search`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "api-key": apiKey,
-    },
-    body: JSON.stringify({
-      vector: queryVector,
-      limit,
-      with_payload: true,
-    }),
+    headers: { "Content-Type": "application/json", "api-key": apiKey },
+    body: JSON.stringify({ vector: queryVector, limit, with_payload: true }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -145,13 +100,11 @@ async function searchQdrant(
 function extractContext(results: QdrantSearchResult[]): { text: string; sources: { document: string; page: number }[] } {
   const sources: { document: string; page: number }[] = [];
   const texts: string[] = [];
-
   for (const r of results) {
     const payload = r.payload || {};
     const content = (payload.page_content || payload.text || payload.content || payload.chunk || "") as string;
     const doc = (payload.document || payload.filename || payload.source || payload.nom_fichier || "Document inconnu") as string;
     const page = (payload.page || payload.page_number || 1) as number;
-
     if (content) {
       texts.push(content);
       if (!sources.find(s => s.document === doc && s.page === page)) {
@@ -159,7 +112,6 @@ function extractContext(results: QdrantSearchResult[]): { text: string; sources:
       }
     }
   }
-
   return { text: texts.join("\n\n"), sources };
 }
 
@@ -172,8 +124,7 @@ serve(async (req) => {
     const { question } = await req.json();
     if (!question || typeof question !== "string") {
       return new Response(JSON.stringify({ error: "Question requise" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
@@ -183,30 +134,22 @@ serve(async (req) => {
 
     if (!QDRANT_URL || !QDRANT_API_KEY || !LOVABLE_API_KEY) {
       return new Response(JSON.stringify({ error: "Configuration manquante" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Get vector sizes for both collections in parallel
+    // Vector search phase
     const [finmaVectorSize, interneVectorSize] = await Promise.all([
       getCollectionVectorSize(QDRANT_URL, QDRANT_API_KEY, "finma_compliance"),
       getCollectionVectorSize(QDRANT_URL, QDRANT_API_KEY, "company_documents"),
     ]);
 
-    console.log(`Vector sizes — finma: ${finmaVectorSize}, interne: ${interneVectorSize}`);
-
-    // Generate query embeddings for each collection size
     const uniqueSizes = [...new Set([finmaVectorSize, interneVectorSize])];
     const embeddingMap: Record<number, number[]> = {};
+    await Promise.all(uniqueSizes.map(async (size) => {
+      embeddingMap[size] = await generateQueryEmbedding(question, LOVABLE_API_KEY, size);
+    }));
 
-    await Promise.all(
-      uniqueSizes.map(async (size) => {
-        embeddingMap[size] = await generateQueryEmbedding(question, LOVABLE_API_KEY, size);
-      })
-    );
-
-    // Search both collections with proper vector embeddings
     const [finmaResults, interneResults] = await Promise.all([
       searchQdrant(QDRANT_URL, QDRANT_API_KEY, "finma_compliance", embeddingMap[finmaVectorSize], 5),
       searchQdrant(QDRANT_URL, QDRANT_API_KEY, "company_documents", embeddingMap[interneVectorSize], 5),
@@ -217,7 +160,6 @@ serve(async (req) => {
     const finmaContext = extractContext(finmaResults);
     const interneContext = extractContext(interneResults);
 
-    // Build AI prompt for cross-analysis
     const systemPrompt = `Tu es un expert en conformité bancaire suisse (FINMA, LBA, CDB, LPD).
 Tu reçois deux ensembles de contextes :
 1. **Réglementation FINMA** : extraits de circulaires et lois
@@ -245,6 +187,7 @@ ${interneContext.text || "Aucun document interne pertinent trouvé."}
 
 Fournis une analyse croisée détaillée.`;
 
+    // Call AI with streaming enabled
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -257,70 +200,63 @@ Fournis une analyse croisée détaillée.`;
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
         ],
-        stream: false,
+        stream: true,
       }),
     });
 
     if (!aiResponse.ok) {
       if (aiResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Limite de requêtes atteinte, réessayez plus tard." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       if (aiResponse.status === 402) {
         return new Response(JSON.stringify({ error: "Crédits épuisés, veuillez recharger votre compte." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       const errText = await aiResponse.text();
       console.error("AI gateway error:", aiResponse.status, errText);
       return new Response(JSON.stringify({ error: "Erreur du service d'analyse" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const aiData = await aiResponse.json();
-    const fullResponse = aiData.choices?.[0]?.message?.content || "Pas de réponse générée.";
+    // Create a ReadableStream that first sends sources metadata, then streams AI tokens
+    const encoder = new TextEncoder();
+    const body = new ReadableStream({
+      async start(controller) {
+        // Send sources as first SSE event
+        const sourcesData = {
+          type: "sources",
+          finmaSources: finmaContext.sources,
+          interneSources: interneContext.sources,
+        };
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(sourcesData)}\n\n`));
 
-    // Split the response into FINMA and internal parts
-    let finmaReponse = fullResponse;
-    let interneReponse = "";
+        // Pipe through the AI stream
+        const reader = aiResponse.body!.getReader();
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            controller.enqueue(value);
+          }
+        } catch (e) {
+          console.error("Stream read error:", e);
+        } finally {
+          controller.close();
+        }
+      },
+    });
 
-    const interneMarker = fullResponse.match(/#{0,3}\s*(?:2[\.\)]\s*)?ANALYSE\s+(?:INTERNE|DOCUMENTS?\s+INTERNES?)/i);
-    const finmaMarker = fullResponse.match(/#{0,3}\s*(?:1[\.\)]\s*)?ANALYSE\s+FINMA/i);
-
-    if (interneMarker && interneMarker.index !== undefined) {
-      finmaReponse = fullResponse.slice(0, interneMarker.index).trim();
-      interneReponse = fullResponse.slice(interneMarker.index).trim();
-
-      if (finmaMarker) {
-        finmaReponse = finmaReponse.replace(finmaMarker[0], "").trim();
-      }
-      interneReponse = interneReponse.replace(interneMarker[0], "").trim();
-    }
-
-    const result = {
-      finma: finmaReponse
-        ? { reponse: finmaReponse, sources: finmaContext.sources }
-        : null,
-      interne: interneReponse
-        ? { reponse: interneReponse, sources: interneContext.sources }
-        : interneContext.text
-          ? { reponse: "Les documents internes ont été consultés mais aucun écart spécifique n'a été identifié pour cette question.", sources: interneContext.sources }
-          : null,
-    };
-
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(body, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
     console.error("question-croisee error:", e);
     return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Erreur interne" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
