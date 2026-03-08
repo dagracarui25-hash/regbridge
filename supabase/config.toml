@@ -2,3 +2,12 @@ project_id = "vcytcgmqygvqwrbzmmzu"
 
 [functions.question-croisee]
 verify_jwt = false
+
+[functions.upload-document]
+verify_jwt = false
+
+[functions.list-documents]
+verify_jwt = false
+
+[functions.delete-document]
+verify_jwt = false

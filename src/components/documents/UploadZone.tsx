@@ -71,29 +71,29 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
     setUploadResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("categorie", category);
+      // Convert file to base64
+      const arrayBuffer = await selectedFile.arrayBuffer();
+      const base64 = btoa(
+        new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+      );
 
       const progressInterval = setInterval(() => {
-        setUploadProgress((p) => Math.min(p + 10, 90));
-      }, 500);
+        setUploadProgress((p) => Math.min(p + 5, 85));
+      }, 1000);
 
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), 60000);
-      const res = await fetch(`${getApiUrl()}/upload-document`, {
-        method: "POST",
-        headers: { "ngrok-skip-browser-warning": "69420" },
-        body: formData,
-        signal: ctrl.signal,
+      const { data, error } = await supabase.functions.invoke("upload-document", {
+        body: {
+          file_base64: base64,
+          filename: selectedFile.name,
+          categorie: category,
+        },
       });
-      clearTimeout(timeout);
+
       clearInterval(progressInterval);
       setUploadProgress(100);
 
-      if (!res.ok) throw new Error("Upload failed");
-      const json = await res.json();
-      setUploadResult({ ok: true, message: `✅ ${t("docs.indexed", { count: json.chunks || 0 })}` });
+      if (error) throw error;
+      setUploadResult({ ok: true, message: `✅ ${t("docs.indexed", { count: data.chunks || 0 })}` });
       setSelectedFile(null);
       if (fileRef.current) fileRef.current.value = "";
       onUploaded();
