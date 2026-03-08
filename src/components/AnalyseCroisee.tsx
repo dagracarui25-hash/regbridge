@@ -266,8 +266,21 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
+              {!streaming && (
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={handleExportPDF}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 rounded-xl border-white/[0.08] hover:bg-primary/10"
+                  >
+                    <Download className="h-4 w-4" />
+                    {t("cross.exportPdf")}
+                  </Button>
+                </div>
+              )}
+              <div ref={resultRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* FINMA Panel */}
               <div className="glass-card rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
