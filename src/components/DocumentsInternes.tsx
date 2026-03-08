@@ -158,7 +158,7 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
   }
 
   return (
-    <div className="px-4 sm:px-8 lg:px-16 py-6">
+    <div className="min-h-full w-full flex flex-col items-center justify-center px-4 sm:px-8 lg:px-16 py-6">
       <div className="w-full max-w-5xl mx-auto space-y-6">
         {/* Upload zone */}
         <div className="glass rounded-2xl p-6 space-y-4">

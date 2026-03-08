@@ -96,7 +96,7 @@ const Index = () => {
         <TabsContent value="croisee" className="flex-1 flex flex-col overflow-hidden mt-0 ring-0 focus-visible:ring-0">
           <AnalyseCroisee onError={handleError} />
         </TabsContent>
-        <TabsContent value="documents" className="flex-1 overflow-y-auto mt-0 ring-0 focus-visible:ring-0">
+        <TabsContent value="documents" className="flex-1 flex flex-col overflow-y-auto mt-0 ring-0 focus-visible:ring-0">
           <DocumentsInternes onError={handleError} />
         </TabsContent>
       </Tabs>
