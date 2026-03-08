@@ -106,9 +106,9 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
   };
 
   return (
-    <div className="glass rounded-2xl p-6 space-y-4">
-      <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-        <Upload className="h-4 w-4 text-primary" />
+    <div className="glass-card rounded-2xl p-6 space-y-4 border-gradient">
+      <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display">
+        <Upload className="h-4 w-4 text-accent-cyan" />
         {t("docs.upload")}
       </h3>
 
@@ -119,12 +119,12 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
-          className={`relative flex flex-col items-center justify-center gap-2 cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 transition-all ${
+          className={`relative flex flex-col items-center justify-center gap-2 cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 transition-all duration-200 ${
             isDragging
-              ? "border-primary bg-primary/10 scale-[1.01]"
+              ? "border-accent-cyan bg-accent-cyan/10 scale-[1.01] glow-cyan"
               : selectedFile
                 ? "border-primary/40 bg-primary/5"
-                : "border-border/60 hover:border-primary/30 hover:bg-secondary/30"
+                : "border-white/[0.08] hover:border-primary/30 hover:bg-secondary/30"
           }`}
         >
           <input
@@ -145,8 +145,8 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
           />
           {isDragging ? (
             <>
-              <Upload className="h-8 w-8 text-primary animate-bounce" />
-              <span className="text-sm font-medium text-primary">{t("docs.dropHere")}</span>
+              <Upload className="h-8 w-8 text-accent-cyan animate-bounce" />
+              <span className="text-sm font-medium text-accent-cyan">{t("docs.dropHere")}</span>
             </>
           ) : selectedFile ? (
             <>
@@ -176,11 +176,11 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("docs.category")}</label>
+          <label className="text-[10px] font-bold gradient-text-gold mb-1.5 block uppercase tracking-[0.12em] font-display">{t("docs.category")}</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/40 transition-colors"
+            className="w-full glass-card border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/40 transition-colors"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>{t(`docs.categories.${c}`)}</option>
@@ -191,7 +191,7 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
         <Button
           onClick={handleUpload}
           disabled={!selectedFile || uploading}
-          className="gradient-primary text-primary-foreground rounded-xl h-10 px-6"
+          className="gradient-primary text-primary-foreground rounded-xl h-10 px-6 glow-sm hover:opacity-90 transition-all duration-200"
         >
           {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
           {t("docs.send")}
@@ -208,7 +208,7 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               className={`flex items-center gap-2 text-sm font-medium rounded-xl px-4 py-2.5 ${
-                uploadResult.ok ? "bg-emerald-500/10 text-emerald-400" : "bg-destructive/10 text-destructive"
+                uploadResult.ok ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-destructive/10 text-destructive border border-destructive/20"
               }`}
             >
               {uploadResult.ok ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}

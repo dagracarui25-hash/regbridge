@@ -34,12 +34,12 @@ export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
 
   return (
     <div className="absolute inset-0 flex items-center justify-center p-8">
-      <div className="glass-strong rounded-2xl p-8 max-w-sm w-full text-center space-y-5">
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
-          <Lock className="h-7 w-7 text-primary" />
+      <div className="glass-card border-gradient rounded-2xl p-8 max-w-sm w-full text-center space-y-5">
+        <div className="w-16 h-16 rounded-2xl glass-card border-gradient flex items-center justify-center mx-auto glow-md animate-float">
+          <Lock className="h-7 w-7 text-accent-cyan" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-foreground">{t("access.title")}</h2>
+          <h2 className="text-lg font-bold gradient-text font-display">{t("access.title")}</h2>
           <p className="text-sm text-muted-foreground mt-1">{t("access.description")}</p>
         </div>
         <div className="space-y-3">
@@ -50,7 +50,7 @@ export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
             onKeyDown={handleKeyDown}
             placeholder={t("access.placeholder")}
             autoFocus
-            className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/40 transition-colors"
+            className="w-full glass-card border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:glow-input-focus transition-all duration-200"
           />
           {error && (
             <p className="text-sm text-destructive font-medium">{t("access.incorrectCode")}</p>
@@ -58,7 +58,7 @@ export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
           <Button
             onClick={handleSubmit}
             disabled={!code.trim() || loading}
-            className="w-full gradient-primary text-primary-foreground rounded-xl h-11"
+            className="w-full gradient-primary text-primary-foreground rounded-xl h-11 glow-sm hover:opacity-90 transition-all duration-200"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("access.submit")}
           </Button>

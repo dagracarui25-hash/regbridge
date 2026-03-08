@@ -76,13 +76,13 @@ export function DocumentLibrary({
 
   return (
     <>
-      <div className="glass rounded-2xl p-6 space-y-4">
+      <div className="glass-card rounded-2xl p-6 space-y-4 border-gradient">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2 font-display">
+            <FileText className="h-4 w-4 text-accent-cyan" />
             {t("docs.library")}
             {documents.length > 0 && (
-              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/15 text-primary font-mono">
                 {documents.length}
               </span>
             )}
@@ -91,7 +91,7 @@ export function DocumentLibrary({
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-secondary/50 border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
+              className="glass-card border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
             >
               <option value="Toutes">{t("docs.allCategories")}</option>
               {CATEGORIES.map((c) => (
@@ -101,7 +101,7 @@ export function DocumentLibrary({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "date" | "nom")}
-              className="bg-secondary/50 border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
+              className="glass-card border border-white/[0.06] rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
             >
               <option value="date">{t("docs.mostRecent")}</option>
               <option value="nom">{t("docs.nameAZ")}</option>
@@ -111,7 +111,7 @@ export function DocumentLibrary({
               disabled={loadingDocs}
               variant="ghost"
               size="sm"
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               <RefreshCw className={`h-4 w-4 mr-1 ${loadingDocs ? "animate-spin" : ""}`} />
               {t("docs.refresh")}
@@ -126,13 +126,13 @@ export function DocumentLibrary({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t("docs.search")}
-            className="w-full bg-secondary/50 border border-border rounded-xl pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 transition-colors"
+            className="w-full glass-card border border-white/[0.06] rounded-xl pl-9 pr-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:glow-input-focus transition-all duration-200"
           />
         </div>
 
         {loadingDocs && documents.length === 0 ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 text-primary animate-spin" />
+            <Loader2 className="h-6 w-6 text-accent-cyan animate-spin" />
           </div>
         ) : documents.length === 0 ? (
           <div className="text-center py-8">
@@ -141,7 +141,7 @@ export function DocumentLibrary({
         ) : (
           <>
             {(searchQuery || filterCategory !== "Toutes") && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground font-mono">
                 {t("docs.resultsCount", { count: filtered.length })}
               </p>
             )}
@@ -158,25 +158,25 @@ export function DocumentLibrary({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex items-center gap-3 bg-secondary/30 rounded-xl px-4 py-3"
+                    className="flex items-center gap-3 glass-card rounded-xl px-4 py-3 hover:bg-primary/5 transition-colors duration-150 group"
                   >
                     <span className="text-lg">📄</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{doc.nom_fichier}</p>
+                      <p className="text-sm font-medium text-foreground truncate font-mono">{doc.nom_fichier}</p>
                       {doc.date_ajout && (
-                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                        <p className="text-[11px] text-muted-foreground/60 mt-0.5 font-mono">
                           {new Date(doc.date_ajout).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" })}
                         </p>
                       )}
                     </div>
-                    <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${CATEGORY_COLORS[doc.categorie] || CATEGORY_COLORS["Autre"]}`}>
+                    <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${CATEGORY_COLORS[doc.categorie] || CATEGORY_COLORS["Autre"]}`}>
                       {t(`docs.categories.${doc.categorie}`)}
                     </span>
                     <Button
                       onClick={() => setDeleteTarget(doc.nom_fichier)}
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -189,17 +189,17 @@ export function DocumentLibrary({
       </div>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
-        <AlertDialogContent className="bg-card border-border">
+        <AlertDialogContent className="glass-strong border border-white/[0.08]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">{t("docs.deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground font-display">{t("docs.deleteConfirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription dangerouslySetInnerHTML={{ __html: t("docs.deleteConfirmDesc", { name: deleteTarget }) }} />
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-lg">{t("docs.cancel")}</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl glass-card border-white/[0.06]">{t("docs.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl"
             >
               {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               {t("docs.delete")}
