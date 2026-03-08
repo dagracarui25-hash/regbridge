@@ -96,6 +96,10 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
       setUploadResult({ ok: false, message: "❌ Format non supporté. Seuls les fichiers PDF sont acceptés." });
       return;
     }
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadResult({ ok: false, message: `❌ Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_FILE_SIZE_MB} Mo.` });
+      return;
+    }
     setSelectedFile(file);
     setUploadResult(null);
   };
