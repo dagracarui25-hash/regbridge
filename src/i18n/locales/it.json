@@ -77,7 +77,8 @@
     "noFinma": "Nessuna risposta FINMA disponibile.",
     "noInternal": "Nessun documento interno caricato. Aggiungi documenti nella scheda <strong>Documenti interni</strong>.",
     "placeholder": "Fai la tua domanda per l'analisi incrociata...",
-    "page": "Pagina {{page}}"
+    "page": "Pagina {{page}}",
+    "exportPdf": "Esporta in PDF"
   },
   "regs": {
     "button": "Regolamenti",

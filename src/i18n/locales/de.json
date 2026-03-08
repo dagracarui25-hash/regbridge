@@ -77,7 +77,8 @@
     "noFinma": "Keine FINMA-Antwort verfügbar.",
     "noInternal": "Kein internes Dokument geladen. Fügen Sie Dokumente im Tab <strong>Interne Dokumente</strong> hinzu.",
     "placeholder": "Stellen Sie Ihre Frage für die Kreuzanalyse...",
-    "page": "Seite {{page}}"
+    "page": "Seite {{page}}",
+    "exportPdf": "Als PDF exportieren"
   },
   "regs": {
     "button": "Regulierungen",
