@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.delete-document]
 verify_jwt = false
+
+[functions.reindex-documents]
+verify_jwt = false

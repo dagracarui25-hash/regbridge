@@ -148,7 +148,7 @@ function extractContext(results: QdrantSearchResult[]): { text: string; sources:
 
   for (const r of results) {
     const payload = r.payload || {};
-    const content = (payload.text || payload.content || payload.chunk || "") as string;
+    const content = (payload.page_content || payload.text || payload.content || payload.chunk || "") as string;
     const doc = (payload.document || payload.filename || payload.source || payload.nom_fichier || "Document inconnu") as string;
     const page = (payload.page || payload.page_number || 1) as number;
 
