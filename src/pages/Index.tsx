@@ -17,6 +17,7 @@ const Index = () => {
   const [showError, setShowError] = useState(false);
 
   const handleError = () => setShowError(true);
+  const handleServerOnline = () => setShowError(false);
 
   return (
     <div className="min-h-screen flex flex-col h-screen relative overflow-hidden">
