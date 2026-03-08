@@ -27,7 +27,13 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
       clearTimeout(timeout);
       if (!res.ok) throw new Error("HTTP error");
       const json = await res.json();
-      setDocuments(Array.isArray(json) ? json : []);
+      const docs = Array.isArray(json) ? json : Array.isArray(json?.documents) ? json.documents : [];
+      setDocuments(docs.map((d: any) => ({
+        nom_fichier: d.filename || d.nom_fichier || "",
+        categorie: d.categorie || "Autre",
+        chunks: d.chunks,
+        date_ajout: d.date_ajout,
+      })));
     } catch {
       onError();
     } finally {
