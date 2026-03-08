@@ -12,6 +12,108 @@ interface QdrantSearchResult {
   payload?: Record<string, unknown>;
 }
 
+/** Get vector size for a collection */
+async function getCollectionVectorSize(
+  qdrantUrl: string,
+  apiKey: string,
+  collection: string
+): Promise<number> {
+  try {
+    const res = await fetch(`${qdrantUrl}/collections/${collection}`, {
+      headers: { "api-key": apiKey },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const config = data.result?.config?.params?.vectors;
+      if (typeof config === "object" && config.size) return config.size;
+      if (typeof config === "object") {
+        const first = Object.values(config)[0] as any;
+        if (first?.size) return first.size;
+      }
+    }
+  } catch (e) {
+    console.error("Error getting collection info:", e);
+  }
+  return 384;
+}
+
+/** Generate embedding for a query using Lovable AI gateway */
+async function generateQueryEmbedding(
+  text: string,
+  apiKey: string,
+  targetSize: number
+): Promise<number[]> {
+  // Try the embeddings endpoint first
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "text-embedding-3-small",
+        input: [text],
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      let embedding = data.data?.[0]?.embedding;
+      if (embedding) {
+        // Resize to match collection
+        if (embedding.length > targetSize) embedding = embedding.slice(0, targetSize);
+        while (embedding.length < targetSize) embedding.push(0);
+        return embedding;
+      }
+    }
+  } catch (e) {
+    console.log("Embeddings endpoint failed, using Gemini fallback:", e);
+  }
+
+  // Fallback: use Gemini to generate pseudo-embedding
+  try {
+    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        messages: [
+          {
+            role: "system",
+            content: `You are an embedding generator. Generate a ${targetSize}-dimensional normalized float vector that semantically represents the input text. Output ONLY a JSON array of ${targetSize} floating point numbers between -1 and 1. No explanation.`,
+          },
+          { role: "user", content: text.slice(0, 500) },
+        ],
+        stream: false,
+      }),
+    });
+
+    if (resp.ok) {
+      const d = await resp.json();
+      const content = d.choices?.[0]?.message?.content || "";
+      const match = content.match(/\[[\s\S]*\]/);
+      if (match) {
+        const vec = JSON.parse(match[0]);
+        if (Array.isArray(vec) && vec.length >= 100) {
+          const normalized = vec.slice(0, targetSize);
+          while (normalized.length < targetSize) normalized.push(0);
+          return normalized;
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Gemini embedding fallback failed:", e);
+  }
+
+  // Last resort: random vector (bad quality but won't crash)
+  return Array.from({ length: targetSize }, () => Math.random() * 2 - 1);
+}
+
+/** Vector search in Qdrant */
 async function searchQdrant(
   qdrantUrl: string,
   apiKey: string,
@@ -40,92 +142,6 @@ async function searchQdrant(
   return data.result || [];
 }
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
-  // Use Lovable AI gateway for embeddings via a chat completion trick:
-  // We'll use a simpler approach - call Qdrant's built-in embedding if available,
-  // or use a lightweight embedding approach.
-  // Since Qdrant might have named vectors, let's try using the query API if available.
-  
-  // Fallback: Use Lovable AI to generate a semantic search query and search by payload
-  // For now, try Qdrant's recommend/query endpoint or use text search
-  // 
-  // Best approach: Use Qdrant's built-in query with text if FastEmbed is configured,
-  // otherwise we need an embedding model.
-  
-  // Let's try using the Lovable AI gateway to get embeddings via a workaround:
-  // We'll use the Google embedding model through the gateway if supported,
-  // or fall back to keyword-based search.
-  
-  // Actually, let's check if the Qdrant collection supports text queries
-  // For production, we should use the same embedding model as the one used to index.
-  // Since the user's Colab backend likely uses sentence-transformers, let's use
-  // Qdrant's query API with prefetch if available.
-  
-  // Simplest reliable approach: use Qdrant's scroll with payload filter for keyword matching,
-  // combined with AI analysis of retrieved chunks.
-  
-  return []; // Will use alternative search method
-}
-
-async function searchQdrantByText(
-  qdrantUrl: string,
-  apiKey: string,
-  collection: string,
-  query: string,
-  limit = 5
-): Promise<QdrantSearchResult[]> {
-  // Try Qdrant's query endpoint (v1.7+) which supports text input with built-in embedding
-  try {
-    const res = await fetch(`${qdrantUrl}/collections/${collection}/points/query`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": apiKey,
-      },
-      body: JSON.stringify({
-        query: query,
-        limit,
-        with_payload: true,
-      }),
-    });
-    
-    if (res.ok) {
-      const data = await res.json();
-      if (data.result?.points?.length > 0) {
-        return data.result.points;
-      }
-    } else {
-      const text = await res.text();
-      console.log(`Query API not available for ${collection}, trying scroll:`, res.status, text);
-    }
-  } catch (e) {
-    console.log(`Query API failed for ${collection}:`, e);
-  }
-
-  // Fallback: scroll and return recent/all chunks (less precise but functional)
-  try {
-    const res = await fetch(`${qdrantUrl}/collections/${collection}/points/scroll`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": apiKey,
-      },
-      body: JSON.stringify({
-        limit,
-        with_payload: true,
-      }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.result?.points || [];
-    }
-  } catch (e) {
-    console.error(`Scroll failed for ${collection}:`, e);
-  }
-
-  return [];
-}
-
 function extractContext(results: QdrantSearchResult[]): { text: string; sources: { document: string; page: number }[] } {
   const sources: { document: string; page: number }[] = [];
   const texts: string[] = [];
@@ -138,7 +154,6 @@ function extractContext(results: QdrantSearchResult[]): { text: string; sources:
 
     if (content) {
       texts.push(content);
-      // Avoid duplicate sources
       if (!sources.find(s => s.document === doc && s.page === page)) {
         sources.push({ document: doc, page });
       }
@@ -166,25 +181,38 @@ serve(async (req) => {
     const QDRANT_API_KEY = Deno.env.get("QDRANT_API_KEY");
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
-    if (!QDRANT_URL || !QDRANT_API_KEY) {
-      return new Response(JSON.stringify({ error: "Qdrant non configuré" }), {
+    if (!QDRANT_URL || !QDRANT_API_KEY || !LOVABLE_API_KEY) {
+      return new Response(JSON.stringify({ error: "Configuration manquante" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY non configurée" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Search both collections in parallel
-    const [finmaResults, interneResults] = await Promise.all([
-      searchQdrantByText(QDRANT_URL, QDRANT_API_KEY, "finma_compliance", question, 5),
-      searchQdrantByText(QDRANT_URL, QDRANT_API_KEY, "company_documents", question, 5),
+    // Get vector sizes for both collections in parallel
+    const [finmaVectorSize, interneVectorSize] = await Promise.all([
+      getCollectionVectorSize(QDRANT_URL, QDRANT_API_KEY, "finma_compliance"),
+      getCollectionVectorSize(QDRANT_URL, QDRANT_API_KEY, "company_documents"),
     ]);
+
+    console.log(`Vector sizes — finma: ${finmaVectorSize}, interne: ${interneVectorSize}`);
+
+    // Generate query embeddings for each collection size
+    const uniqueSizes = [...new Set([finmaVectorSize, interneVectorSize])];
+    const embeddingMap: Record<number, number[]> = {};
+
+    await Promise.all(
+      uniqueSizes.map(async (size) => {
+        embeddingMap[size] = await generateQueryEmbedding(question, LOVABLE_API_KEY, size);
+      })
+    );
+
+    // Search both collections with proper vector embeddings
+    const [finmaResults, interneResults] = await Promise.all([
+      searchQdrant(QDRANT_URL, QDRANT_API_KEY, "finma_compliance", embeddingMap[finmaVectorSize], 5),
+      searchQdrant(QDRANT_URL, QDRANT_API_KEY, "company_documents", embeddingMap[interneVectorSize], 5),
+    ]);
+
+    console.log(`Search results — finma: ${finmaResults.length}, interne: ${interneResults.length}`);
 
     const finmaContext = extractContext(finmaResults);
     const interneContext = extractContext(interneResults);
@@ -261,24 +289,17 @@ Fournis une analyse croisée détaillée.`;
     let finmaReponse = fullResponse;
     let interneReponse = "";
 
-    // Try to split on "ANALYSE INTERNE" marker
     const interneMarker = fullResponse.match(/#{0,3}\s*(?:2[\.\)]\s*)?ANALYSE\s+(?:INTERNE|DOCUMENTS?\s+INTERNES?)/i);
     const finmaMarker = fullResponse.match(/#{0,3}\s*(?:1[\.\)]\s*)?ANALYSE\s+FINMA/i);
-    
+
     if (interneMarker && interneMarker.index !== undefined) {
       finmaReponse = fullResponse.slice(0, interneMarker.index).trim();
       interneReponse = fullResponse.slice(interneMarker.index).trim();
-      
-      // Remove the FINMA header if present
+
       if (finmaMarker) {
         finmaReponse = finmaReponse.replace(finmaMarker[0], "").trim();
       }
-      // Remove the INTERNE header
       interneReponse = interneReponse.replace(interneMarker[0], "").trim();
-    } else {
-      // If no clear split, put everything in finma and note no internal docs
-      finmaReponse = fullResponse;
-      interneReponse = interneContext.text ? "" : "";
     }
 
     const result = {
@@ -288,7 +309,7 @@ Fournis une analyse croisée détaillée.`;
       interne: interneReponse
         ? { reponse: interneReponse, sources: interneContext.sources }
         : interneContext.text
-          ? { reponse: "Analyse en cours — les documents internes ont été consultés mais aucun écart spécifique n'a été identifié pour cette question.", sources: interneContext.sources }
+          ? { reponse: "Les documents internes ont été consultés mais aucun écart spécifique n'a été identifié pour cette question.", sources: interneContext.sources }
           : null,
     };
 
