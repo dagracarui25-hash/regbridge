@@ -197,7 +197,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
 
           {/* Input */}
           <div className="flex-shrink-0 glass-strong px-4 py-3">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-full">
               <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
                 <input
                   ref={inputRef}
