@@ -62,6 +62,7 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [sortBy, setSortBy] = useState<"date" | "nom">("date");
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
