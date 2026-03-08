@@ -93,7 +93,28 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
             )}
           </AnimatePresence>
 
-          {result && (
+          {errorType && !loading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto mb-6"
+            >
+              <div className={`rounded-2xl px-5 py-4 flex items-start gap-3 border ${
+                errorType === "not_found"
+                  ? "bg-accent-gold/10 border-accent-gold/30"
+                  : "bg-destructive/10 border-destructive/30"
+              }`}>
+                <AlertTriangle className={`h-5 w-5 mt-0.5 shrink-0 ${
+                  errorType === "not_found" ? "text-accent-gold" : "text-destructive"
+                }`} />
+                <p className={`text-sm ${
+                  errorType === "not_found" ? "text-accent-gold" : "text-destructive"
+                }`}>
+                  {t(errorType === "not_found" ? "error.notFound" : "error.offline")}
+                </p>
+              </div>
+            </motion.div>
+          )}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
