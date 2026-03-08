@@ -251,6 +251,18 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
                   <FileText className="h-8 w-8 text-primary" />
                   <span className="text-sm font-medium text-foreground">{selectedFile.name}</span>
                   <span className="text-xs text-muted-foreground">Cliquez ou glissez pour changer</span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedFile(null);
+                      setUploadResult(null);
+                      if (fileRef.current) fileRef.current.value = "";
+                    }}
+                    className="absolute top-2 right-2 p-1 rounded-full bg-muted/50 hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </>
               ) : (
                 <>
