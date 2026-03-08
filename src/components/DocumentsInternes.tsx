@@ -323,6 +323,11 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
               Bibliothèque de documents
+              {documents.length > 0 && (
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                  {documents.length}
+                </span>
+              )}
             </h3>
             <Button
               onClick={fetchDocuments}
