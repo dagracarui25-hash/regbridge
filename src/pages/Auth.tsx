@@ -25,6 +25,27 @@ const Auth = () => {
     if (session) navigate("/", { replace: true });
   }, [session, navigate]);
 
+  const [forgotPassword, setForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setResetSent(true);
+      toast.success(t("auth.resetEmailSent"));
+    } catch (error: any) {
+      toast.error(error.message || t("error.generic"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -150,10 +171,10 @@ const Auth = () => {
           <div className="glass-strong rounded-2xl p-8 space-y-6 border-gradient">
             <div className="text-center">
               <h2 className="text-xl font-bold text-foreground font-display">
-                {isLogin ? t("auth.login") : t("auth.signup")}
+                {forgotPassword ? t("auth.forgotPasswordTitle") : isLogin ? t("auth.login") : t("auth.signup")}
               </h2>
               <p className="text-sm text-muted-foreground mt-1.5">
-                {isLogin ? "Accédez à votre espace compliance" : "Créez votre compte en quelques secondes"}
+                {forgotPassword ? t("auth.forgotPasswordDesc") : isLogin ? t("auth.loginSubtitle") : t("auth.signupSubtitle")}
               </p>
             </div>
 
@@ -177,75 +198,141 @@ const Auth = () => {
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
             </div>
 
-            <form onSubmit={handleEmailAuth} className="space-y-3.5">
-              <AnimatePresence mode="wait">
-                {!isLogin && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="relative overflow-hidden"
+            {forgotPassword ? (
+              resetSent ? (
+                <div className="text-center space-y-4">
+                  <Mail className="w-10 h-10 text-accent-cyan mx-auto" />
+                  <p className="text-sm text-muted-foreground">{t("auth.resetEmailSentDesc")}</p>
+                  <button
+                    onClick={() => { setForgotPassword(false); setResetSent(false); }}
+                    className="text-primary hover:text-primary/80 font-semibold transition-colors text-sm"
                   >
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                    {t("auth.backToLogin")}
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className="space-y-3.5">
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      placeholder={t("auth.fullName")}
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
+                      type="email"
+                      placeholder={t("auth.email")}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
-                      required={!isLogin}
+                      required
+                      autoFocus
                     />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  type="email"
-                  placeholder={t("auth.email")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
-                  required
-                />
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  type="password"
-                  placeholder={t("auth.password")}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
-                  required
-                  minLength={6}
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-12 gradient-primary text-primary-foreground glow-sm font-semibold text-sm group"
-              >
-                {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <span className="flex items-center gap-2">
-                    {isLogin ? t("auth.loginBtn") : t("auth.signupBtn")}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                )}
-              </Button>
-            </form>
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={loading || !email}
+                    className="w-full h-12 gradient-primary text-primary-foreground glow-sm font-semibold text-sm group"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        {t("auth.sendResetLink")}
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    )}
+                  </Button>
+                  <p className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setForgotPassword(false)}
+                      className="text-primary hover:text-primary/80 font-semibold transition-colors text-sm"
+                    >
+                      {t("auth.backToLogin")}
+                    </button>
+                  </p>
+                </form>
+              )
+            ) : (
+              <>
+                <form onSubmit={handleEmailAuth} className="space-y-3.5">
+                  <AnimatePresence mode="wait">
+                    {!isLogin && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="relative overflow-hidden"
+                      >
+                        <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                        <Input
+                          placeholder={t("auth.fullName")}
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                          className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
+                          required={!isLogin}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      placeholder={t("auth.email")}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
+                      required
+                    />
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      type="password"
+                      placeholder={t("auth.password")}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-11 h-12 glass border-white/[0.08] focus:border-primary/40 transition-colors"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  {isLogin && (
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        onClick={() => setForgotPassword(true)}
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {t("auth.forgotPassword")}
+                      </button>
+                    </div>
+                  )}
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 gradient-primary text-primary-foreground glow-sm font-semibold text-sm group"
+                  >
+                    {loading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        {isLogin ? t("auth.loginBtn") : t("auth.signupBtn")}
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    )}
+                  </Button>
+                </form>
 
-            <p className="text-center text-sm text-muted-foreground pt-1">
-              {isLogin ? t("auth.noAccount") : t("auth.alreadyRegistered")}{" "}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:text-primary/80 font-semibold transition-colors"
-              >
-                {isLogin ? t("auth.signupBtn") : t("auth.loginBtn")}
-              </button>
-            </p>
+                <p className="text-center text-sm text-muted-foreground pt-1">
+                  {isLogin ? t("auth.noAccount") : t("auth.alreadyRegistered")}{" "}
+                  <button
+                    onClick={() => setIsLogin(!isLogin)}
+                    className="text-primary hover:text-primary/80 font-semibold transition-colors"
+                  >
+                    {isLogin ? t("auth.signupBtn") : t("auth.loginBtn")}
+                  </button>
+                </p>
+              </>
+            )}
           </div>
 
           <p className="text-[10px] text-muted-foreground/30 text-center mt-6 font-mono lg:hidden">
