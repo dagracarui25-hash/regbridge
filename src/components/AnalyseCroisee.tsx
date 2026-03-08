@@ -1,5 +1,5 @@
 import { useState, useRef, KeyboardEvent } from "react";
-import { Send, Loader2, Building2, Landmark, GitCompare, Scale, FileSearch, AlertTriangle } from "lucide-react";
+import { Send, Loader2, Building2, Landmark, GitCompare, Scale, FileSearch, AlertTriangle, Download } from "lucide-react";
 import { FormattedMessage } from "@/components/FormattedMessage";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -56,6 +56,21 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
   const [result, setResult] = useState<CrossResult | null>(null);
   const [errorType, setErrorType] = useState<ErrorType>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  const handleExportPDF = async () => {
+    if (!resultRef.current) return;
+    const html2pdf = (await import("html2pdf.js")).default;
+    html2pdf()
+      .set({
+        margin: [10, 10, 10, 10],
+        filename: "analyse-croisee.pdf",
+        html2canvas: { scale: 2, backgroundColor: "#1a1a2e" },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      })
+      .from(resultRef.current)
+      .save();
+  };
 
   const handleSend = async (query?: string) => {
     const trimmed = (query || input).trim();
@@ -251,8 +266,21 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
+              {!streaming && (
+                <div className="flex justify-end mb-3">
+                  <Button
+                    onClick={handleExportPDF}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 rounded-xl border-white/[0.08] hover:bg-primary/10"
+                  >
+                    <Download className="h-4 w-4" />
+                    {t("cross.exportPdf")}
+                  </Button>
+                </div>
+              )}
+              <div ref={resultRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* FINMA Panel */}
               <div className="glass-card rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
@@ -311,6 +339,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                 ) : (
                   <div className="text-sm text-muted-foreground bg-secondary/30 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: t("cross.noInternal") }} />
                 )}
+              </div>
               </div>
             </motion.div>
           )}

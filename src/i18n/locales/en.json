@@ -77,7 +77,8 @@
     "noFinma": "No FINMA response available.",
     "noInternal": "No internal document loaded. Add documents in the <strong>Internal Documents</strong> tab.",
     "placeholder": "Ask your question for cross analysis...",
-    "page": "Page {{page}}"
+    "page": "Page {{page}}",
+    "exportPdf": "Export as PDF"
   },
   "regs": {
     "button": "Regulations",
