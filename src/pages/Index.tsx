@@ -90,7 +90,7 @@ const Index = () => {
           </div>
         </div>
 
-        <TabsContent value="question" className="flex-1 overflow-hidden mt-0 ring-0 focus-visible:ring-0">
+        <TabsContent value="question" className="flex-1 flex flex-col overflow-hidden mt-0 ring-0 focus-visible:ring-0">
           <QuestionFinma onError={handleError} />
         </TabsContent>
         <TabsContent value="croisee" className="flex-1 flex flex-col overflow-hidden mt-0 ring-0 focus-visible:ring-0">
