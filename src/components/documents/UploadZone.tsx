@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import { getApiUrl } from "@/hooks/useApiUrl";
 import { CATEGORIES, MAX_FILE_SIZE, MAX_FILE_SIZE_MB } from "./types";
+import { useTranslation } from "react-i18next";
 
 interface UploadZoneProps {
   validateSession: () => boolean;
@@ -13,6 +14,7 @@ interface UploadZoneProps {
 }
 
 export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneProps) {
+  const { t } = useTranslation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [uploading, setUploading] = useState(false);
@@ -49,11 +51,11 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
     if (file.type !== "application/pdf") {
-      setUploadResult({ ok: false, message: "❌ Format non supporté. Seuls les fichiers PDF sont acceptés." });
+      setUploadResult({ ok: false, message: `❌ ${t("docs.unsupportedFormat")}` });
       return;
     }
     if (file.size > MAX_FILE_SIZE) {
-      setUploadResult({ ok: false, message: `❌ Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_FILE_SIZE_MB} Mo.` });
+      setUploadResult({ ok: false, message: `❌ ${t("docs.fileTooLarge", { size: (file.size / 1024 / 1024).toFixed(1), max: MAX_FILE_SIZE_MB })}` });
       return;
     }
     setSelectedFile(file);
@@ -91,12 +93,12 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
 
       if (!res.ok) throw new Error("Upload failed");
       const json = await res.json();
-      setUploadResult({ ok: true, message: `✅ Document indexé — ${json.chunks || 0} chunks créés` });
+      setUploadResult({ ok: true, message: `✅ ${t("docs.indexed", { count: json.chunks || 0 })}` });
       setSelectedFile(null);
       if (fileRef.current) fileRef.current.value = "";
       onUploaded();
     } catch {
-      setUploadResult({ ok: false, message: "❌ Erreur lors de l'upload du document" });
+      setUploadResult({ ok: false, message: `❌ ${t("docs.uploadError")}` });
       onError();
     } finally {
       setUploading(false);
@@ -107,7 +109,7 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
     <div className="glass rounded-2xl p-6 space-y-4">
       <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
         <Upload className="h-4 w-4 text-primary" />
-        Ajouter un document
+        {t("docs.upload")}
       </h3>
 
       <div className="space-y-3">
@@ -132,7 +134,7 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
             onChange={(e) => {
               const f = e.target.files?.[0] || null;
               if (f && f.size > MAX_FILE_SIZE) {
-                setUploadResult({ ok: false, message: `❌ Fichier trop volumineux (${(f.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_FILE_SIZE_MB} Mo.` });
+                setUploadResult({ ok: false, message: `❌ ${t("docs.fileTooLarge", { size: (f.size / 1024 / 1024).toFixed(1), max: MAX_FILE_SIZE_MB })}` });
                 setSelectedFile(null);
               } else {
                 setSelectedFile(f);
@@ -144,13 +146,13 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
           {isDragging ? (
             <>
               <Upload className="h-8 w-8 text-primary animate-bounce" />
-              <span className="text-sm font-medium text-primary">Déposez le fichier ici</span>
+              <span className="text-sm font-medium text-primary">{t("docs.dropHere")}</span>
             </>
           ) : selectedFile ? (
             <>
               <FileText className="h-8 w-8 text-primary" />
               <span className="text-sm font-medium text-foreground">{selectedFile.name}</span>
-              <span className="text-xs text-muted-foreground">Cliquez ou glissez pour changer</span>
+              <span className="text-xs text-muted-foreground">{t("docs.clickOrDragToChange")}</span>
               <button
                 type="button"
                 onClick={(e) => {
@@ -167,21 +169,21 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
           ) : (
             <>
               <Upload className="h-8 w-8 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">Glissez un PDF ici ou cliquez pour parcourir</span>
-              <span className="text-xs text-muted-foreground/60">Format : PDF — Max. {MAX_FILE_SIZE_MB} Mo</span>
+              <span className="text-sm font-medium text-muted-foreground">{t("docs.dragPdf")}</span>
+              <span className="text-xs text-muted-foreground/60">{t("docs.formatPdf", { size: MAX_FILE_SIZE_MB })}</span>
             </>
           )}
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">Catégorie</label>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">{t("docs.category")}</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full bg-secondary/50 border border-border rounded-xl px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/40 transition-colors"
           >
             {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
+              <option key={c} value={c}>{t(`docs.categories.${c}`)}</option>
             ))}
           </select>
         </div>
@@ -192,7 +194,7 @@ export function UploadZone({ validateSession, onUploaded, onError }: UploadZoneP
           className="gradient-primary text-primary-foreground rounded-xl h-10 px-6"
         >
           {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
-          Envoyer
+          {t("docs.send")}
         </Button>
 
         {uploading && (

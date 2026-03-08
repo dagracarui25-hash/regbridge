@@ -4,6 +4,7 @@ import { FormattedMessage } from "@/components/FormattedMessage";
 import { Button } from "@/components/ui/button";
 import { getApiUrl } from "@/hooks/useApiUrl";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 interface CrossResult {
   finma: { reponse: string; sources: { document: string; page: number }[] } | null;
@@ -15,6 +16,7 @@ interface AnalyseCroiseeProps {
 }
 
 export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CrossResult | null>(null);
@@ -53,11 +55,10 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
   };
 
   const formatSources = (sources: { document: string; page: number }[]) =>
-    sources.map((s) => `${s.document} — Page ${s.page}`);
+    sources.map((s) => `${s.document} — ${t("cross.page", { page: s.page })}`);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Results */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-5xl mx-auto">
           <AnimatePresence>
@@ -70,7 +71,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
               >
                 <div className="glass rounded-2xl px-6 py-4 flex items-center gap-3">
                   <Loader2 className="h-5 w-5 text-primary animate-spin" />
-                  <span className="text-sm text-muted-foreground">Analyse croisée en cours...</span>
+                  <span className="text-sm text-muted-foreground">{t("cross.loading")}</span>
                 </div>
               </motion.div>
             )}
@@ -82,11 +83,10 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-4"
             >
-              {/* FINMA column */}
               <div className="glass rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
                   <Landmark className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-bold text-foreground">🏛 Réglementation FINMA</h3>
+                  <h3 className="text-sm font-bold text-foreground">{t("cross.finmaTitle")}</h3>
                 </div>
                 {result.finma ? (
                   <>
@@ -95,7 +95,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                     </div>
                     {result.finma.sources?.length > 0 && (
                       <div className="pt-2 border-t border-white/[0.06]">
-                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 Sources</p>
+                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 {t("chat.sources")}</p>
                         <ul className="space-y-1">
                           {formatSources(result.finma.sources).map((s, i) => (
                             <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30">{s}</li>
@@ -105,15 +105,14 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                     )}
                   </>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Aucune réponse FINMA disponible.</p>
+                  <p className="text-sm text-muted-foreground">{t("cross.noFinma")}</p>
                 )}
               </div>
 
-              {/* Internal column */}
               <div className="glass rounded-2xl p-5 space-y-3">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/[0.06]">
                   <Building2 className="h-5 w-5 text-primary" />
-                  <h3 className="text-sm font-bold text-foreground">🏢 Procédure interne</h3>
+                  <h3 className="text-sm font-bold text-foreground">{t("cross.internalTitle")}</h3>
                 </div>
                 {result.interne && result.interne.reponse ? (
                   <>
@@ -122,7 +121,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                     </div>
                     {result.interne.sources?.length > 0 && (
                       <div className="pt-2 border-t border-white/[0.06]">
-                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 Sources</p>
+                        <p className="text-[11px] font-medium text-muted-foreground mb-1 uppercase tracking-wider">📄 {t("chat.sources")}</p>
                         <ul className="space-y-1">
                           {formatSources(result.interne.sources).map((s, i) => (
                             <li key={i} className="text-xs text-muted-foreground/80 font-mono pl-2 border-l-2 border-primary/30">{s}</li>
@@ -132,9 +131,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                     )}
                   </>
                 ) : (
-                  <div className="text-sm text-muted-foreground bg-secondary/30 rounded-xl p-4">
-                    Aucun document interne chargé. Ajoutez des documents dans l'onglet <strong>Documents internes</strong>.
-                  </div>
+                  <div className="text-sm text-muted-foreground bg-secondary/30 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: t("cross.noInternal") }} />
                 )}
               </div>
             </motion.div>
@@ -146,17 +143,14 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
                   <span className="text-2xl">🔀</span>
                 </div>
-                <h3 className="text-base font-semibold text-foreground">Analyse croisée</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  Comparez la réglementation FINMA avec vos procédures internes. Posez une question ci-dessous.
-                </p>
+                <h3 className="text-base font-semibold text-foreground">{t("cross.title")}</h3>
+                <p className="text-sm text-muted-foreground max-w-md">{t("cross.description")}</p>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Input */}
       <div className="flex-shrink-0 glass-strong px-4 py-3">
         <div className="max-w-5xl mx-auto">
           <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
@@ -164,7 +158,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Posez votre question pour l'analyse croisée..."
+              placeholder={t("cross.placeholder")}
               disabled={loading}
               className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/60 py-2.5 font-sans disabled:opacity-50"
             />

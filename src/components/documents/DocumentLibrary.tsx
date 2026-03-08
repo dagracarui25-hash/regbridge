@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { getApiUrl } from "@/hooks/useApiUrl";
 import { Document, CATEGORIES, CATEGORY_COLORS } from "./types";
+import { useTranslation } from "react-i18next";
 
 interface DocumentLibraryProps {
   documents: Document[];
@@ -32,11 +33,14 @@ export function DocumentLibrary({
   validateSession,
   onError,
 }: DocumentLibraryProps) {
+  const { t, i18n } = useTranslation();
   const [filterCategory, setFilterCategory] = useState("Toutes");
   const [sortBy, setSortBy] = useState<"date" | "nom">("date");
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  const dateLocale = i18n.language === "fr" ? "fr-CH" : i18n.language === "de" ? "de-CH" : i18n.language === "it" ? "it-CH" : "en-GB";
 
   const handleDelete = async () => {
     if (!deleteTarget || deleting) return;
@@ -66,7 +70,7 @@ export function DocumentLibrary({
     .filter((doc) => filterCategory === "Toutes" || doc.categorie === filterCategory)
     .filter((doc) => !searchQuery || doc.nom_fichier.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
-      if (sortBy === "nom") return a.nom_fichier.localeCompare(b.nom_fichier, "fr");
+      if (sortBy === "nom") return a.nom_fichier.localeCompare(b.nom_fichier, i18n.language);
       return (b.date_ajout || "").localeCompare(a.date_ajout || "");
     });
 
@@ -76,7 +80,7 @@ export function DocumentLibrary({
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <FileText className="h-4 w-4 text-primary" />
-            Bibliothèque de documents
+            {t("docs.library")}
             {documents.length > 0 && (
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                 {documents.length}
@@ -89,9 +93,9 @@ export function DocumentLibrary({
               onChange={(e) => setFilterCategory(e.target.value)}
               className="bg-secondary/50 border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
             >
-              <option value="Toutes">Toutes les catégories</option>
+              <option value="Toutes">{t("docs.allCategories")}</option>
               {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>{t(`docs.categories.${c}`)}</option>
               ))}
             </select>
             <select
@@ -99,8 +103,8 @@ export function DocumentLibrary({
               onChange={(e) => setSortBy(e.target.value as "date" | "nom")}
               className="bg-secondary/50 border border-border rounded-lg px-2.5 py-1.5 text-xs text-foreground outline-none focus:border-primary/40 transition-colors"
             >
-              <option value="date">Plus récent</option>
-              <option value="nom">Nom A→Z</option>
+              <option value="date">{t("docs.mostRecent")}</option>
+              <option value="nom">{t("docs.nameAZ")}</option>
             </select>
             <Button
               onClick={onRefresh}
@@ -110,19 +114,18 @@ export function DocumentLibrary({
               className="text-muted-foreground hover:text-foreground"
             >
               <RefreshCw className={`h-4 w-4 mr-1 ${loadingDocs ? "animate-spin" : ""}`} />
-              Rafraîchir
+              {t("docs.refresh")}
             </Button>
           </div>
         </div>
 
-        {/* Search bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher un document…"
+            placeholder={t("docs.search")}
             className="w-full bg-secondary/50 border border-border rounded-xl pl-9 pr-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 transition-colors"
           />
         </div>
@@ -133,18 +136,18 @@ export function DocumentLibrary({
           </div>
         ) : documents.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground">Aucun document indexé pour le moment.</p>
+            <p className="text-sm text-muted-foreground">{t("docs.empty")}</p>
           </div>
         ) : (
           <>
             {(searchQuery || filterCategory !== "Toutes") && (
               <p className="text-xs text-muted-foreground">
-                {filtered.length} résultat{filtered.length !== 1 ? "s" : ""} trouvé{filtered.length !== 1 ? "s" : ""}
+                {t("docs.resultsCount", { count: filtered.length })}
               </p>
             )}
             {filtered.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-sm text-muted-foreground">Aucun document trouvé.</p>
+                <p className="text-sm text-muted-foreground">{t("docs.noResults")}</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -162,12 +165,12 @@ export function DocumentLibrary({
                       <p className="text-sm font-medium text-foreground truncate">{doc.nom_fichier}</p>
                       {doc.date_ajout && (
                         <p className="text-[11px] text-muted-foreground mt-0.5">
-                          {new Date(doc.date_ajout).toLocaleDateString("fr-CH", { day: "numeric", month: "short", year: "numeric" })}
+                          {new Date(doc.date_ajout).toLocaleDateString(dateLocale, { day: "numeric", month: "short", year: "numeric" })}
                         </p>
                       )}
                     </div>
                     <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${CATEGORY_COLORS[doc.categorie] || CATEGORY_COLORS["Autre"]}`}>
-                      {doc.categorie}
+                      {t(`docs.categories.${doc.categorie}`)}
                     </span>
                     <Button
                       onClick={() => setDeleteTarget(doc.nom_fichier)}
@@ -185,24 +188,21 @@ export function DocumentLibrary({
         )}
       </div>
 
-      {/* Delete confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
         <AlertDialogContent className="bg-card border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground">Supprimer ce document ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Supprimer <strong>{deleteTarget}</strong> ? Cette action est irréversible.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="text-foreground">{t("docs.deleteConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription dangerouslySetInnerHTML={{ __html: t("docs.deleteConfirmDesc", { name: deleteTarget }) }} />
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-lg">Annuler</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-lg">{t("docs.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={deleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg"
             >
               {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Supprimer
+              {t("docs.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

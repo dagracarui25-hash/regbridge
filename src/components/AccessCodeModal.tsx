@@ -1,12 +1,14 @@
 import { useState, KeyboardEvent } from "react";
 import { Lock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface AccessCodeModalProps {
   onAuthenticate: (code: string) => Promise<boolean>;
 }
 
 export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
+  const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -37,10 +39,8 @@ export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
           <Lock className="h-7 w-7 text-primary" />
         </div>
         <div>
-          <h2 className="text-lg font-bold text-foreground">Accès protégé</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Entrez le code d'accès pour gérer les documents internes.
-          </p>
+          <h2 className="text-lg font-bold text-foreground">{t("access.title")}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t("access.description")}</p>
         </div>
         <div className="space-y-3">
           <input
@@ -48,19 +48,19 @@ export function AccessCodeModal({ onAuthenticate }: AccessCodeModalProps) {
             value={code}
             onChange={(e) => { setCode(e.target.value); setError(false); }}
             onKeyDown={handleKeyDown}
-            placeholder="Code d'accès"
+            placeholder={t("access.placeholder")}
             autoFocus
             className="w-full bg-secondary/50 border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/40 transition-colors"
           />
           {error && (
-            <p className="text-sm text-destructive font-medium">Code incorrect</p>
+            <p className="text-sm text-destructive font-medium">{t("access.incorrectCode")}</p>
           )}
           <Button
             onClick={handleSubmit}
             disabled={!code.trim() || loading}
             className="w-full gradient-primary text-primary-foreground rounded-xl h-11"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Accéder"}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("access.submit")}
           </Button>
         </div>
       </div>

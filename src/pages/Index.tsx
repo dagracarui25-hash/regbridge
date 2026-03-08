@@ -7,10 +7,13 @@ import { ErrorBanner } from "@/components/ErrorBanner";
 import { QuestionFinma } from "@/components/QuestionFinma";
 import { AnalyseCroisee } from "@/components/AnalyseCroisee";
 import { DocumentsInternes } from "@/components/DocumentsInternes";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
   const { signOut } = useAuth();
+  const { t } = useTranslation();
   const [showError, setShowError] = useState(false);
 
   const handleError = () => setShowError(true);
@@ -35,21 +38,22 @@ const Index = () => {
           <div className="flex-1">
             <h1 className="text-base font-bold tracking-tight gradient-text">RegBridge</h1>
             <p className="text-[10px] text-muted-foreground tracking-widest uppercase font-medium">
-              Assistant Conformité FINMA
+              {t("nav.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 mr-2">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs text-muted-foreground font-mono hidden sm:inline">En ligne</span>
+              <span className="text-xs text-muted-foreground font-mono hidden sm:inline">{t("nav.online")}</span>
             </div>
+            <LanguageSelector />
             <SettingsDrawer />
             <Button
               variant="ghost"
               size="icon"
               onClick={signOut}
               className="h-8 w-8 text-muted-foreground hover:text-destructive"
-              title="Se déconnecter"
+              title={t("common.logout")}
             >
               <LogOut className="h-4 w-4" />
             </Button>
@@ -67,7 +71,7 @@ const Index = () => {
                 className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
                 <MessageSquare className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">Question FINMA</span>
+                <span className="hidden sm:inline">{t("nav.question")}</span>
                 <span className="sm:hidden truncate">FINMA</span>
               </TabsTrigger>
               <TabsTrigger
@@ -75,16 +79,16 @@ const Index = () => {
                 className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
                 <GitCompare className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">Analyse croisée</span>
-                <span className="sm:hidden truncate">Croisée</span>
+                <span className="hidden sm:inline">{t("nav.analysis")}</span>
+                <span className="sm:hidden truncate">{t("nav.analysis")}</span>
               </TabsTrigger>
               <TabsTrigger
                 value="documents"
                 className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-none border-b-2 border-transparent data-[state=active]:border-primary flex-1 sm:flex-none px-2 sm:px-4 py-2.5 text-xs sm:text-sm gap-1.5 sm:gap-2 min-w-0"
               >
                 <FolderOpen className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">Documents internes</span>
-                <span className="sm:hidden truncate">Documents</span>
+                <span className="hidden sm:inline">{t("nav.documents")}</span>
+                <span className="sm:hidden truncate">{t("nav.documents")}</span>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -103,7 +107,7 @@ const Index = () => {
 
       {/* Footer */}
       <div className="flex-shrink-0 text-center py-1.5 relative z-10">
-        <p className="text-[10px] text-muted-foreground/40 font-mono">RegBridge v1.0 — FINMA 🇨🇭</p>
+        <p className="text-[10px] text-muted-foreground/40 font-mono">{t("footer.version")}</p>
       </div>
     </div>
   );

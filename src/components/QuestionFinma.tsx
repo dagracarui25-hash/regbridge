@@ -6,20 +6,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ChatSidebar } from "@/components/ChatSidebar";
 import { useConversations } from "@/hooks/useConversations";
-
-const SUGGESTIONS = [
-  "Quelles sont les obligations KYC ?",
-  "Exigences de fonds propres Bâle III",
-  "Règles de gouvernance FINMA",
-  "Obligations en matière de blanchiment (LBA)",
-  "Exigences de reporting prudentiel",
-];
+import { useTranslation } from "react-i18next";
 
 interface QuestionFinmaProps {
   onError: () => void;
 }
 
 export function QuestionFinma({ onError }: QuestionFinmaProps) {
+  const { t } = useTranslation();
   const {
     conversations,
     activeConversation,
@@ -36,6 +30,14 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const messages = activeConversation?.messages || [];
+
+  const SUGGESTIONS = [
+    t("suggestions.kyc"),
+    t("suggestions.basel"),
+    t("suggestions.governance"),
+    t("suggestions.aml"),
+    t("suggestions.reporting"),
+  ];
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -72,12 +74,10 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
         />
 
         <div className="flex-1 flex flex-col relative overflow-hidden">
-          {/* Sidebar trigger */}
           <div className="absolute top-3 left-3 z-10">
             <SidebarTrigger className="h-8 w-8 text-muted-foreground hover:text-foreground" />
           </div>
 
-          {/* Chat area */}
           <div className="flex-1 overflow-hidden">
             <div ref={scrollRef} className="h-full overflow-y-auto px-4 sm:px-8 lg:px-16 py-6 pb-8">
               <div className="max-w-full space-y-4">
@@ -112,7 +112,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                         {msg.role === "agent" && msg.sources && msg.sources.length > 0 && (
                           <div className="mt-3 pt-2.5 border-t border-white/[0.06]">
                             <p className="text-[11px] font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
-                              📄 Sources
+                              📄 {t("chat.sources")}
                             </p>
                             <ul className="space-y-1">
                               {msg.sources.map((src, i) => (
@@ -131,7 +131,6 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                   ))}
                 </AnimatePresence>
 
-                {/* Loading */}
                 <AnimatePresence>
                   {isLoading && (
                     <motion.div
@@ -156,7 +155,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                               />
                             ))}
                           </div>
-                          <span className="text-xs text-muted-foreground font-medium">Analyse en cours</span>
+                          <span className="text-xs text-muted-foreground font-medium">{t("chat.analyzing")}</span>
                         </div>
                         <div className="mt-2 h-0.5 w-32 rounded-full overflow-hidden bg-secondary">
                           <div className="h-full animate-shimmer rounded-full" />
@@ -166,7 +165,6 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                   )}
                 </AnimatePresence>
 
-                {/* Suggestions */}
                 <AnimatePresence>
                   {showSuggestions && (
                     <motion.div
@@ -195,7 +193,6 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
             </div>
           </div>
 
-          {/* Input */}
           <div className="flex-shrink-0 glass-strong px-4 py-3">
             <div className="max-w-full">
               <div className="flex gap-2 items-center glass rounded-xl px-3 py-1.5 focus-within:border-primary/30 transition-all duration-300">
@@ -204,7 +201,7 @@ export function QuestionFinma({ onError }: QuestionFinmaProps) {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Posez votre question FINMA..."
+                  placeholder={t("chat.placeholder")}
                   disabled={isLoading}
                   className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/60 py-2.5 font-sans disabled:opacity-50"
                 />
