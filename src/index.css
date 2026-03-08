@@ -163,6 +163,101 @@
   }
 }
 
+/* Chatbar styles */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chatbar-footer {
+  background: linear-gradient(to top, rgba(6, 11, 20, 0.98) 0%, rgba(6, 11, 20, 0.85) 60%, transparent 100%);
+  padding: 20px 24px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  animation: slideUpFade 0.4s ease-out forwards;
+}
+
+.chatbar-container {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 6px 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 0 0 1px rgba(45, 110, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+}
+
+.chatbar-container:focus-within {
+  border-color: rgba(45, 110, 255, 0.6);
+  box-shadow:
+    0 0 0 3px rgba(45, 110, 255, 0.2),
+    0 0 20px rgba(45, 110, 255, 0.15);
+}
+
+.chatbar-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(240, 244, 255, 0.92);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 10px 0;
+}
+
+.chatbar-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.chatbar-input:disabled {
+  opacity: 0.4;
+}
+
+.chatbar-send {
+  background: linear-gradient(135deg, #2D6EFF, #00D4FF) !important;
+  border-radius: 12px !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px;
+  padding: 0 !important;
+  box-shadow: 0 4px 15px rgba(45, 110, 255, 0.4);
+  transition: all 0.2s ease !important;
+  color: white !important;
+  opacity: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chatbar-send:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(45, 110, 255, 0.6);
+}
+
+.chatbar-send:disabled {
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 0.4 !important;
+  transform: none !important;
+}
+
+.chatbar-send svg {
+  color: white;
+  opacity: 1;
+}
+
+.footer-version {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-top: 8px;
+}
+
 /* Keyframes */
 @keyframes pulse-dot {
   0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }

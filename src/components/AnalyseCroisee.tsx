@@ -382,22 +382,22 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
       </div>
 
       {/* Input bar */}
-      <div className="flex-shrink-0 glass-strong border-t border-white/[0.06] px-4 py-3">
+      <div className="flex-shrink-0 chatbar-footer">
         <div className="max-w-5xl mx-auto">
-          <div className="flex gap-3 items-center glass-card rounded-2xl px-4 py-2 focus-within:glow-input-focus transition-all duration-300">
+          <div className="flex gap-3 items-center chatbar-container">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t("cross.placeholder")}
               disabled={isActive}
-              className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/50 py-2.5 font-sans disabled:opacity-40"
+              className="chatbar-input"
             />
             <Button
               onClick={() => handleSend()}
               disabled={isActive || !input.trim()}
               size="sm"
-              className="gradient-primary rounded-xl h-10 w-10 p-0 text-primary-foreground hover:opacity-90 hover:scale-[1.08] transition-all duration-200 glow-sm disabled:opacity-20 disabled:shadow-none disabled:scale-100"
+              className="chatbar-send"
             >
               {isActive ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
             </Button>
