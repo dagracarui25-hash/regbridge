@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Shield, LogOut, MessageSquare, GitCompare, FolderOpen } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { SettingsDrawer } from "@/components/SettingsDrawer";
 import { ErrorBanner } from "@/components/ErrorBanner";
 import { QuestionFinma } from "@/components/QuestionFinma";
