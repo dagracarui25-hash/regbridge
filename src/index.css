@@ -177,24 +177,25 @@
 }
 
 .chatbar-container {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 16px;
   padding: 6px 18px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 0 0 1px rgba(45, 110, 255, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
 }
 
 .chatbar-container:focus-within {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.12);
   border-color: rgba(45, 110, 255, 0.6);
   box-shadow:
     0 0 0 3px rgba(45, 110, 255, 0.2),
-    0 4px 24px rgba(0, 0, 0, 0.12);
+    0 0 20px rgba(45, 110, 255, 0.15);
 }
 
 .chatbar-input {
@@ -202,14 +203,14 @@
   background: transparent;
   border: none;
   outline: none;
-  color: rgba(10, 15, 30, 0.9);
+  color: rgba(240, 244, 255, 0.92);
   font-size: 15px;
   font-family: 'DM Sans', sans-serif;
   padding: 10px 0;
 }
 
 .chatbar-input::placeholder {
-  color: rgba(10, 15, 30, 0.45);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .chatbar-input:disabled {
