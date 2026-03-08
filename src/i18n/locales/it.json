@@ -135,6 +135,163 @@
     "alreadyRegistered": "Già registrato?",
     "loginSuccess": "Accesso riuscito",
     "checkEmail": "Controlla la tua email per confermare la registrazione",
-    "subtitle": "Assistente Conformità FINMA"
+    "subtitle": "Assistente Conformità FINMA",
+    "loginSubtitle": "Accedi al tuo spazio compliance",
+    "signupSubtitle": "Crea il tuo account in pochi secondi"
+  },
+  "about": {
+    "headerTitle": "RegBridge — Documentazione",
+    "headerSubtitle": "Guida completa",
+    "toc": {
+      "what": "Cos'è RegBridge?",
+      "architecture": "Architettura tecnica",
+      "tabs": "Funzionalità per scheda",
+      "finmaDocs": "Documenti FINMA indicizzati",
+      "api": "Endpoint API",
+      "stack": "Stack tecnico",
+      "roadmap": "Roadmap"
+    },
+    "what": {
+      "title": "Cos'è RegBridge?",
+      "desc1": "è un assistente IA per la conformità normativa bancaria svizzera, basato su un'architettura",
+      "rag": "RAG (Retrieval-Augmented Generation) dual-collection",
+      "desc2": "Permette a un istituto finanziario di:",
+      "items": [
+        "Interrogare le circolari FINMA in linguaggio naturale",
+        "Confrontare le procedure interne con la normativa",
+        "Rilevare automaticamente le lacune di conformità",
+        "Ottenere risposte con fonti e tracciabilità"
+      ]
+    },
+    "architecture": {
+      "title": "Architettura tecnica"
+    },
+    "tabs": {
+      "title": "Funzionalità per scheda",
+      "examples": "Esempi",
+      "limitsMvp": "Limiti MVP",
+      "finma": {
+        "title": "Domanda FINMA",
+        "items": [
+          "Porre qualsiasi domanda sulle circolari FINMA indicizzate in Qdrant (collezione finma_docs)",
+          "Ottenere risposte in linguaggio naturale con citazioni precise (PDF + numero pagina)",
+          "Suggerimenti di domande rapide: KYC, Basilea III, Governance, LRD, Reporting",
+          "Cronologia conversazioni salvata nella sessione",
+          "Avviare una nuova conversazione in qualsiasi momento"
+        ],
+        "examples": [
+          "Quali sono gli obblighi KYC?",
+          "Quali sono i requisiti di Basilea III?",
+          "Regole di governance FINMA?"
+        ],
+        "limits": [
+          "Solo circolari già indicizzate",
+          "Nessuna memoria tra le sessioni",
+          "Modello limitato a 8B parametri (Groq free tier)"
+        ]
+      },
+      "cross": {
+        "title": "Analisi incrociata",
+        "items": [
+          "Confrontare SIMULTANEAMENTE finma_docs e internal_docs",
+          "Rilevare lacune di conformità tra le due collezioni",
+          "Citare le fonti di entrambi i lati in ogni risposta",
+          "Identificare le lacune nelle procedure interne",
+          "Formulare raccomandazioni attuabili"
+        ],
+        "examples": [
+          "La nostra procedura KYC è conforme FINMA?",
+          "La nostra governance dei rischi rispetta la Circ. 2023/1?",
+          "La nostra politica dati è conforme LPD?"
+        ]
+      },
+      "docs": {
+        "title": "Documenti interni",
+        "items": [
+          "Caricare PDF di procedure interne",
+          "Selezionare una categoria: Procedura interna, Regolamento interno, Altro",
+          "Indicizzazione automatica in Qdrant con chunking",
+          "Libreria con filtri per categoria, ordinamento per data, ricerca testo",
+          "Modifica categoria inline ed eliminazione",
+          "Audit trail delle modifiche"
+        ]
+      }
+    },
+    "finmaDocs": {
+      "title": "Documenti FINMA indicizzati (MVP)",
+      "items": [
+        "Circ.-FINMA 2023/1 — Rischi operativi",
+        "Circ.-FINMA 2016/7 — Rischi di credito",
+        "Circ.-FINMA 2025/2 — (da confermare)",
+        "OBA-FINMA — Ordinanza riciclaggio",
+        "ASB Convenzione CDB 2020",
+        "SBA Agreement CDB 2020"
+      ]
+    },
+    "api": {
+      "title": "Endpoint API disponibili",
+      "method": "Metodo",
+      "endpoint": "Endpoint",
+      "description": "Descrizione",
+      "items": [
+        ["GET", "/health", "Verifica stato server"],
+        ["POST", "/query", "Domanda FINMA semplice"],
+        ["POST", "/cross-query", "Analisi incrociata dual-collection"],
+        ["POST", "/upload", "Caricamento e indicizzazione PDF"],
+        ["GET", "/documents", "Elenco documenti indicizzati"],
+        ["DELETE", "/documents/{id}", "Eliminazione documento"]
+      ]
+    },
+    "stack": {
+      "title": "Stack tecnico completo",
+      "items": [
+        { "label": "Frontend", "value": "React / Lovable / Tailwind CSS" },
+        { "label": "Backend", "value": "Python / FastAPI / LangChain" },
+        { "label": "LLM", "value": "Groq API — LLaMA 3.1 8B Instant" },
+        { "label": "Embeddings", "value": "HuggingFace (all-MiniLM-L6-v2)" },
+        { "label": "Vector DB", "value": "Qdrant Cloud (dual-collection)" },
+        { "label": "Tunnel", "value": "Ngrok (dev) / URL configurabile" },
+        { "label": "Auth", "value": "Basata su sessione" },
+        { "label": "i18n", "value": "i18next — EN / DE / FR / IT" }
+      ]
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "phases": [
+        {
+          "version": "v1.0 MVP",
+          "subtitle": "Attuale",
+          "items": [
+            { "done": true, "text": "RAG FINMA mono-collection" },
+            { "done": true, "text": "Caricamento documenti interni" },
+            { "done": true, "text": "Analisi incrociata dual-collection" },
+            { "done": true, "text": "Interfaccia multilingue 4 lingue" },
+            { "done": true, "text": "Libreria documenti" }
+          ]
+        },
+        {
+          "version": "v2.0",
+          "subtitle": "Se vincitori GenAI Zürich 2026",
+          "items": [
+            { "done": false, "text": "DORA — Digital Operational Resilience Act" },
+            { "done": false, "text": "LPD completa + RGPD" },
+            { "done": false, "text": "Integrazione Basilea III/IV" },
+            { "done": false, "text": "Memoria tra le sessioni" },
+            { "done": false, "text": "Esportazione report PDF di conformità" },
+            { "done": false, "text": "Multi-utente con ruoli" }
+          ]
+        },
+        {
+          "version": "v3.0",
+          "subtitle": "Visione a lungo termine",
+          "items": [
+            { "done": false, "text": "40+ quadri normativi" },
+            { "done": false, "text": "Avvisi automatici nuove circolari" },
+            { "done": false, "text": "Integrazione core banking" },
+            { "done": false, "text": "Dashboard analytics conformità" }
+          ]
+        }
+      ]
+    }
   }
 }

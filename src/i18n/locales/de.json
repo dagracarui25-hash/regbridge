@@ -135,6 +135,163 @@
     "alreadyRegistered": "Bereits registriert?",
     "loginSuccess": "Anmeldung erfolgreich",
     "checkEmail": "Überprüfen Sie Ihre E-Mail, um Ihre Registrierung zu bestätigen",
-    "subtitle": "FINMA-Compliance-Assistent"
+    "subtitle": "FINMA-Compliance-Assistent",
+    "loginSubtitle": "Zugang zu Ihrem Compliance-Bereich",
+    "signupSubtitle": "Erstellen Sie Ihr Konto in Sekunden"
+  },
+  "about": {
+    "headerTitle": "RegBridge — Dokumentation",
+    "headerSubtitle": "Vollständiger Leitfaden",
+    "toc": {
+      "what": "Was ist RegBridge?",
+      "architecture": "Technische Architektur",
+      "tabs": "Funktionen pro Tab",
+      "finmaDocs": "Indexierte FINMA-Dokumente",
+      "api": "API-Endpunkte",
+      "stack": "Tech-Stack",
+      "roadmap": "Roadmap"
+    },
+    "what": {
+      "title": "Was ist RegBridge?",
+      "desc1": "ist ein KI-gestützter Schweizer Banken-Compliance-Assistent, basierend auf einer",
+      "rag": "RAG (Retrieval-Augmented Generation) Dual-Collection-Architektur",
+      "desc2": "Er ermöglicht einem Finanzinstitut:",
+      "items": [
+        "FINMA-Rundschreiben in natürlicher Sprache abfragen",
+        "Interne Verfahren mit Regulierungen vergleichen",
+        "Compliance-Lücken automatisch erkennen",
+        "Quellenbasierte und nachvollziehbare Antworten erhalten"
+      ]
+    },
+    "architecture": {
+      "title": "Technische Architektur"
+    },
+    "tabs": {
+      "title": "Funktionen pro Tab",
+      "examples": "Beispiele",
+      "limitsMvp": "MVP-Einschränkungen",
+      "finma": {
+        "title": "FINMA-Frage",
+        "items": [
+          "Jede Frage zu in Qdrant indexierten FINMA-Rundschreiben stellen (finma_docs Sammlung)",
+          "Antworten in natürlicher Sprache mit genauen Zitaten (PDF + Seitennummer)",
+          "Vordefinierte Schnellfragen: KYC, Basel III, Governance, GwG, Berichterstattung",
+          "Gesprächsverlauf in der Sitzung gespeichert",
+          "Jederzeit ein neues Gespräch starten"
+        ],
+        "examples": [
+          "Was sind die KYC-Pflichten?",
+          "Was sind die Basel-III-Anforderungen?",
+          "FINMA-Governance-Regeln?"
+        ],
+        "limits": [
+          "Nur bereits indexierte Rundschreiben",
+          "Kein sitzungsübergreifender Speicher",
+          "Modell auf 8B Parameter begrenzt (Groq Free Tier)"
+        ]
+      },
+      "cross": {
+        "title": "Kreuzanalyse",
+        "items": [
+          "finma_docs und internal_docs GLEICHZEITIG vergleichen",
+          "Compliance-Lücken zwischen beiden Sammlungen erkennen",
+          "Quellen beider Seiten in jeder Antwort zitieren",
+          "Lücken in internen Verfahren identifizieren",
+          "Umsetzbare Empfehlungen formulieren"
+        ],
+        "examples": [
+          "Ist unser KYC-Verfahren FINMA-konform?",
+          "Entspricht unsere Risiko-Governance dem Rundschreiben 2023/1?",
+          "Ist unsere Datenschutzrichtlinie DSG-konform?"
+        ]
+      },
+      "docs": {
+        "title": "Interne Dokumente",
+        "items": [
+          "PDFs interner Verfahren hochladen",
+          "Kategorie auswählen: Internes Verfahren, Interne Vorschrift, Andere",
+          "Automatische Indexierung in Qdrant mit Chunking",
+          "Bibliothek mit Kategoriefiltern, Datumssortierung, Textsuche",
+          "Inline-Kategoriebearbeitung und Löschung",
+          "Änderungs-Audit-Trail"
+        ]
+      }
+    },
+    "finmaDocs": {
+      "title": "Indexierte FINMA-Dokumente (MVP)",
+      "items": [
+        "Rundschr.-FINMA 2023/1 — Operationelle Risiken",
+        "Rundschr.-FINMA 2016/7 — Kreditrisiken",
+        "Rundschr.-FINMA 2025/2 — (zu bestätigen)",
+        "GwV-FINMA — Geldwäschereiverordnung",
+        "SBVg Vereinbarung VSB 2020",
+        "SBA Agreement CDB 2020"
+      ]
+    },
+    "api": {
+      "title": "Verfügbare API-Endpunkte",
+      "method": "Methode",
+      "endpoint": "Endpunkt",
+      "description": "Beschreibung",
+      "items": [
+        ["GET", "/health", "Server-Statusprüfung"],
+        ["POST", "/query", "Einfache FINMA-Frage"],
+        ["POST", "/cross-query", "Dual-Collection-Kreuzanalyse"],
+        ["POST", "/upload", "PDF-Upload und Indexierung"],
+        ["GET", "/documents", "Indexierte Dokumente auflisten"],
+        ["DELETE", "/documents/{id}", "Dokument löschen"]
+      ]
+    },
+    "stack": {
+      "title": "Vollständiger Tech-Stack",
+      "items": [
+        { "label": "Frontend", "value": "React / Lovable / Tailwind CSS" },
+        { "label": "Backend", "value": "Python / FastAPI / LangChain" },
+        { "label": "LLM", "value": "Groq API — LLaMA 3.1 8B Instant" },
+        { "label": "Embeddings", "value": "HuggingFace (all-MiniLM-L6-v2)" },
+        { "label": "Vector DB", "value": "Qdrant Cloud (Dual-Collection)" },
+        { "label": "Tunnel", "value": "Ngrok (Dev) / konfigurierbare URL" },
+        { "label": "Auth", "value": "Sitzungsbasiert" },
+        { "label": "i18n", "value": "i18next — EN / DE / FR / IT" }
+      ]
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "phases": [
+        {
+          "version": "v1.0 MVP",
+          "subtitle": "Aktuell",
+          "items": [
+            { "done": true, "text": "FINMA RAG Mono-Collection" },
+            { "done": true, "text": "Upload interner Dokumente" },
+            { "done": true, "text": "Dual-Collection Kreuzanalyse" },
+            { "done": true, "text": "4-sprachige Oberfläche" },
+            { "done": true, "text": "Dokumentenbibliothek" }
+          ]
+        },
+        {
+          "version": "v2.0",
+          "subtitle": "Bei Gewinn GenAI Zürich 2026",
+          "items": [
+            { "done": false, "text": "DORA — Digital Operational Resilience Act" },
+            { "done": false, "text": "Vollständiges DSG + DSGVO" },
+            { "done": false, "text": "Basel III/IV Integration" },
+            { "done": false, "text": "Sitzungsübergreifender Speicher" },
+            { "done": false, "text": "PDF-Compliance-Bericht-Export" },
+            { "done": false, "text": "Mehrbenutzer mit Rollen" }
+          ]
+        },
+        {
+          "version": "v3.0",
+          "subtitle": "Langfristige Vision",
+          "items": [
+            { "done": false, "text": "40+ regulatorische Rahmenwerke" },
+            { "done": false, "text": "Automatische Benachrichtigungen bei neuen Rundschreiben" },
+            { "done": false, "text": "Core-Banking-Integration" },
+            { "done": false, "text": "Compliance-Analytics-Dashboard" }
+          ]
+        }
+      ]
+    }
   }
 }

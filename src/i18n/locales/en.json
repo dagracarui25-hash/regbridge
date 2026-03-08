@@ -135,6 +135,163 @@
     "alreadyRegistered": "Already registered?",
     "loginSuccess": "Login successful",
     "checkEmail": "Check your email to confirm your registration",
-    "subtitle": "FINMA Compliance Assistant"
+    "subtitle": "FINMA Compliance Assistant",
+    "loginSubtitle": "Access your compliance space",
+    "signupSubtitle": "Create your account in seconds"
+  },
+  "about": {
+    "headerTitle": "RegBridge — Documentation",
+    "headerSubtitle": "Complete guide",
+    "toc": {
+      "what": "What is RegBridge?",
+      "architecture": "Technical architecture",
+      "tabs": "Features by tab",
+      "finmaDocs": "Indexed FINMA documents",
+      "api": "API Endpoints",
+      "stack": "Tech stack",
+      "roadmap": "Roadmap"
+    },
+    "what": {
+      "title": "What is RegBridge?",
+      "desc1": "is an AI-powered Swiss banking regulatory compliance assistant, built on a",
+      "rag": "RAG (Retrieval-Augmented Generation) dual-collection architecture",
+      "desc2": "It enables a financial institution to:",
+      "items": [
+        "Query FINMA circulars in natural language",
+        "Compare internal procedures with regulations",
+        "Automatically detect compliance gaps",
+        "Get sourced and traceable answers"
+      ]
+    },
+    "architecture": {
+      "title": "Technical architecture"
+    },
+    "tabs": {
+      "title": "Features by tab",
+      "examples": "Examples",
+      "limitsMvp": "MVP Limitations",
+      "finma": {
+        "title": "FINMA Question",
+        "items": [
+          "Ask any question about FINMA circulars indexed in Qdrant (finma_docs collection)",
+          "Get natural language answers with precise citations (PDF + page number)",
+          "Predefined quick question suggestions: KYC, Basel III, Governance, AML, Reporting",
+          "Conversation history persisted in session",
+          "Start a new conversation at any time"
+        ],
+        "examples": [
+          "What are the KYC obligations?",
+          "What are the Basel III requirements?",
+          "FINMA governance rules?"
+        ],
+        "limits": [
+          "Only already indexed circulars",
+          "No cross-session memory",
+          "Model limited to 8B parameters (Groq free tier)"
+        ]
+      },
+      "cross": {
+        "title": "Cross analysis",
+        "items": [
+          "Simultaneously compare finma_docs and internal_docs",
+          "Detect compliance gaps between both collections",
+          "Cite sources from both sides in each response",
+          "Identify gaps in internal procedures",
+          "Formulate actionable recommendations"
+        ],
+        "examples": [
+          "Is our KYC procedure FINMA compliant?",
+          "Does our risk governance comply with Circ. 2023/1?",
+          "Is our data policy DPA compliant?"
+        ]
+      },
+      "docs": {
+        "title": "Internal documents",
+        "items": [
+          "Upload internal procedure PDFs",
+          "Select a category: Internal Procedure, Internal Regulation, Other",
+          "Automatic indexing in Qdrant with chunking",
+          "Library with category filters, date sorting, text search",
+          "Inline category editing and deletion",
+          "Modification audit trail"
+        ]
+      }
+    },
+    "finmaDocs": {
+      "title": "Indexed FINMA Documents (MVP)",
+      "items": [
+        "Circ.-FINMA 2023/1 — Operational risks",
+        "Circ.-FINMA 2016/7 — Credit risks",
+        "Circ.-FINMA 2025/2 — (to be confirmed)",
+        "OBA-FINMA — Anti-money laundering ordinance",
+        "ASB Convention CDB 2020",
+        "SBA Agreement CDB 2020"
+      ]
+    },
+    "api": {
+      "title": "Available API Endpoints",
+      "method": "Method",
+      "endpoint": "Endpoint",
+      "description": "Description",
+      "items": [
+        ["GET", "/health", "Server health check"],
+        ["POST", "/query", "Simple FINMA question"],
+        ["POST", "/cross-query", "Dual-collection cross analysis"],
+        ["POST", "/upload", "PDF upload and indexing"],
+        ["GET", "/documents", "List indexed documents"],
+        ["DELETE", "/documents/{id}", "Delete document"]
+      ]
+    },
+    "stack": {
+      "title": "Full tech stack",
+      "items": [
+        { "label": "Frontend", "value": "React / Lovable / Tailwind CSS" },
+        { "label": "Backend", "value": "Python / FastAPI / LangChain" },
+        { "label": "LLM", "value": "Groq API — LLaMA 3.1 8B Instant" },
+        { "label": "Embeddings", "value": "HuggingFace (all-MiniLM-L6-v2)" },
+        { "label": "Vector DB", "value": "Qdrant Cloud (dual-collection)" },
+        { "label": "Tunnel", "value": "Ngrok (dev) / configurable URL" },
+        { "label": "Auth", "value": "Session-based" },
+        { "label": "i18n", "value": "i18next — EN / DE / FR / IT" }
+      ]
+    },
+    "roadmap": {
+      "title": "Roadmap",
+      "phases": [
+        {
+          "version": "v1.0 MVP",
+          "subtitle": "Current",
+          "items": [
+            { "done": true, "text": "FINMA RAG mono-collection" },
+            { "done": true, "text": "Internal document upload" },
+            { "done": true, "text": "Dual-collection cross analysis" },
+            { "done": true, "text": "4-language multilingual interface" },
+            { "done": true, "text": "Document library" }
+          ]
+        },
+        {
+          "version": "v2.0",
+          "subtitle": "If GenAI Zürich 2026 winner",
+          "items": [
+            { "done": false, "text": "DORA — Digital Operational Resilience Act" },
+            { "done": false, "text": "Full DPA + GDPR" },
+            { "done": false, "text": "Basel III/IV integration" },
+            { "done": false, "text": "Cross-session memory" },
+            { "done": false, "text": "PDF compliance report export" },
+            { "done": false, "text": "Multi-user with roles" }
+          ]
+        },
+        {
+          "version": "v3.0",
+          "subtitle": "Long-term vision",
+          "items": [
+            { "done": false, "text": "40+ regulatory frameworks" },
+            { "done": false, "text": "Automatic alerts for new circulars" },
+            { "done": false, "text": "Core banking integration" },
+            { "done": false, "text": "Compliance analytics dashboard" }
+          ]
+        }
+      ]
+    }
   }
 }
