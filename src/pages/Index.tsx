@@ -55,6 +55,15 @@ const Index = () => {
               </span>
             </div>
             <RegulationsDrawer />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/about")}
+              className="h-8 w-8 text-muted-foreground hover:text-accent-cyan transition-colors"
+              title="Documentation"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </Button>
             <LanguageSelector />
             <SettingsDrawer />
             <Button
