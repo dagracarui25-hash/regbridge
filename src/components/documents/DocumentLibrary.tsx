@@ -48,15 +48,10 @@ export function DocumentLibrary({
 
     setDeleting(true);
     try {
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), 30000);
-      const res = await fetch(`${getApiUrl()}/documents/${encodeURIComponent(deleteTarget)}`, {
-        method: "DELETE",
-        headers: { "ngrok-skip-browser-warning": "69420" },
-        signal: ctrl.signal,
+      const { error } = await supabase.functions.invoke("delete-document", {
+        body: { filename: deleteTarget },
       });
-      clearTimeout(timeout);
-      if (!res.ok) throw new Error("Delete failed");
+      if (error) throw error;
       onDeleted(deleteTarget);
     } catch {
       onError();

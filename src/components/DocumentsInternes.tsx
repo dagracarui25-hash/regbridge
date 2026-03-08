@@ -18,16 +18,9 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
   const fetchDocuments = useCallback(async () => {
     setLoadingDocs(true);
     try {
-      const ctrl = new AbortController();
-      const timeout = setTimeout(() => ctrl.abort(), 30000);
-      const res = await fetch(`${getApiUrl()}/documents`, {
-        headers: { "ngrok-skip-browser-warning": "69420" },
-        signal: ctrl.signal,
-      });
-      clearTimeout(timeout);
-      if (!res.ok) throw new Error("HTTP error");
-      const json = await res.json();
-      const docs = Array.isArray(json) ? json : Array.isArray(json?.documents) ? json.documents : [];
+      const { data, error } = await supabase.functions.invoke("list-documents");
+      if (error) throw error;
+      const docs = Array.isArray(data) ? data : Array.isArray(data?.documents) ? data.documents : [];
       setDocuments(docs.map((d: any) => ({
         nom_fichier: d.filename || d.nom_fichier || "",
         categorie: d.categorie || "Autre",
