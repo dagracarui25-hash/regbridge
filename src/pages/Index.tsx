@@ -116,7 +116,7 @@ const Index = () => {
 
       {/* Footer */}
       <div className="flex-shrink-0 text-center py-1.5 relative z-10">
-        <p className="text-[10px] text-muted-foreground/30 font-mono tracking-wider">{t("footer.version")}</p>
+        <p className="footer-version font-mono">{t("footer.version")}</p>
       </div>
     </div>
   );

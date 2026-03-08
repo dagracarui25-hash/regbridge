@@ -201,9 +201,9 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
           </div>
 
           {/* Chat input bar */}
-          <div className="flex-shrink-0 glass-strong border-t border-white/[0.06] px-4 py-3">
+          <div className="flex-shrink-0 chatbar-footer">
             <div className="max-w-full">
-              <div className="flex gap-3 items-center glass-card rounded-2xl px-4 py-2 focus-within:glow-input-focus transition-all duration-300">
+              <div className="flex gap-3 items-center chatbar-container">
                 <input
                   ref={inputRef}
                   value={input}
@@ -211,13 +211,13 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
                   onKeyDown={handleKeyDown}
                   placeholder={isServerOffline ? t("chat.serverOfflinePlaceholder") : t("chat.placeholder")}
                   disabled={isLoading || isServerOffline}
-                  className="flex-1 bg-transparent border-none outline-none text-sm text-foreground placeholder:text-muted-foreground/50 py-2.5 font-sans disabled:opacity-40"
+                  className="chatbar-input"
                 />
                 <Button
                   onClick={() => handleSend()}
                   disabled={isLoading || isServerOffline || !input.trim()}
                   size="sm"
-                  className="gradient-primary rounded-xl h-10 w-10 p-0 text-primary-foreground hover:opacity-90 hover:scale-[1.08] transition-all duration-200 glow-sm disabled:opacity-20 disabled:shadow-none disabled:scale-100"
+                  className="chatbar-send"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
