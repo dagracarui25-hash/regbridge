@@ -44,8 +44,10 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 mr-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-xs text-muted-foreground font-mono hidden sm:inline">{t("nav.online")}</span>
+              <div className={`w-2 h-2 rounded-full transition-colors duration-500 ${showError ? "bg-destructive animate-pulse" : "bg-primary animate-pulse"}`} />
+              <span className={`text-xs font-mono hidden sm:inline transition-colors duration-500 ${showError ? "text-destructive" : "text-muted-foreground"}`}>
+                {showError ? t("nav.offline") : t("nav.online")}
+              </span>
             </div>
             <LanguageSelector />
             <SettingsDrawer />

@@ -4,6 +4,7 @@
     "analysis": "Cross Analysis",
     "documents": "Internal Documents",
     "online": "Online",
+    "offline": "Offline",
     "subtitle": "FINMA Compliance Assistant"
   },
   "docs": {
