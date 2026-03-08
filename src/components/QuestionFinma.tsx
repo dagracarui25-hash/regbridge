@@ -52,6 +52,11 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
     }
   }, [messages, isLoading]);
 
+  // Auto-focus input when switching or creating conversations
+  useEffect(() => {
+    setTimeout(() => inputRef.current?.focus(), 50);
+  }, [activeId]);
+
   const handleSend = (text?: string) => {
     const trimmed = (text || input).trim();
     if (!trimmed || isLoading) return;

@@ -127,11 +127,26 @@ export function useConversations(options: UseConversationsOptions = {}) {
   }, []);
 
   const createConversation = useCallback(() => {
-    const conv = createNewConversation();
-    setData((prev) => ({
-      conversations: [conv, ...prev.conversations],
-      activeId: conv.id,
-    }));
+    setData((prev) => {
+      // Guard: don't create a new one if the active conversation is already empty (0 user messages)
+      const active = prev.conversations.find((c) => c.id === prev.activeId);
+      if (active && active.messages.filter((m) => m.role === "user").length === 0) {
+        return prev; // keep focus on the existing empty conversation
+      }
+
+      const conv = createNewConversation();
+      let convs = [conv, ...prev.conversations];
+
+      // FIFO: max 50 conversations
+      if (convs.length > 50) {
+        convs = convs.slice(0, 50);
+      }
+
+      return {
+        conversations: convs,
+        activeId: conv.id,
+      };
+    });
   }, []);
 
   const deleteConversation = useCallback((id: string) => {
