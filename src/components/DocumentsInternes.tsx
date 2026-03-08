@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, DragEvent } from "react";
 import { Upload, Trash2, RefreshCw, FileText, Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -60,6 +60,39 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
+
+  const handleDragEnter = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    if (e.dataTransfer.items?.length) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setIsDragging(false);
+  };
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    dragCounter.current = 0;
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type === "application/pdf") {
+      setSelectedFile(file);
+      setUploadResult(null);
+    }
+  };
 
   const fetchDocuments = useCallback(async () => {
     setLoadingDocs(true);
@@ -168,24 +201,45 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
           </h3>
 
           <div className="space-y-3">
-            <div>
+            <div
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onClick={() => fileRef.current?.click()}
+              className={`relative flex flex-col items-center justify-center gap-2 cursor-pointer rounded-xl border-2 border-dashed px-4 py-8 transition-all ${
+                isDragging
+                  ? "border-primary bg-primary/10 scale-[1.01]"
+                  : selectedFile
+                    ? "border-primary/40 bg-primary/5"
+                    : "border-border/60 hover:border-primary/30 hover:bg-secondary/30"
+              }`}
+            >
               <input
                 ref={fileRef}
                 type="file"
                 accept=".pdf"
                 onChange={(e) => { setSelectedFile(e.target.files?.[0] || null); setUploadResult(null); }}
                 className="hidden"
-                id="file-upload"
               />
-              <label
-                htmlFor="file-upload"
-                className="flex items-center gap-3 cursor-pointer glass rounded-xl px-4 py-3 hover:border-primary/30 transition-colors"
-              >
-                <FileText className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">
-                  {selectedFile ? selectedFile.name : "Sélectionner un fichier PDF"}
-                </span>
-              </label>
+              {isDragging ? (
+                <>
+                  <Upload className="h-8 w-8 text-primary animate-bounce" />
+                  <span className="text-sm font-medium text-primary">Déposez le fichier ici</span>
+                </>
+              ) : selectedFile ? (
+                <>
+                  <FileText className="h-8 w-8 text-primary" />
+                  <span className="text-sm font-medium text-foreground">{selectedFile.name}</span>
+                  <span className="text-xs text-muted-foreground">Cliquez ou glissez pour changer</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="h-8 w-8 text-muted-foreground" />
+                  <span className="text-sm font-medium text-muted-foreground">Glissez un PDF ici ou cliquez pour parcourir</span>
+                  <span className="text-xs text-muted-foreground/60">Format accepté : PDF</span>
+                </>
+              )}
             </div>
 
             <div>
