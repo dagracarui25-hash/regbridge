@@ -17,6 +17,7 @@ const Index = () => {
   const { signOut } = useAuth();
   const { t } = useTranslation();
   const [showError, setShowError] = useState(false);
+  const [activeTab, setActiveTab] = useState("question");
 
   const handleError = () => setShowError(true);
   const handleServerOnline = () => setShowError(false);
