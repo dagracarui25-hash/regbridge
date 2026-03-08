@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Shield, LogOut, MessageSquare, GitCompare, FolderOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Shield, LogOut, MessageSquare, GitCompare, FolderOpen, HelpCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { SettingsDrawer } from "@/components/SettingsDrawer";
