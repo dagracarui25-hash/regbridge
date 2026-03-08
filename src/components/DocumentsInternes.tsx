@@ -24,6 +24,9 @@ interface Document {
   date_ajout?: string;
 }
 
+const MAX_FILE_SIZE_MB = 20;
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
+
 const CATEGORIES = [
   "Procédure interne",
   "Politique RH",
@@ -91,6 +94,10 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
     if (!file) return;
     if (file.type !== "application/pdf") {
       setUploadResult({ ok: false, message: "❌ Format non supporté. Seuls les fichiers PDF sont acceptés." });
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadResult({ ok: false, message: `❌ Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_FILE_SIZE_MB} Mo.` });
       return;
     }
     setSelectedFile(file);
@@ -222,7 +229,16 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
                 ref={fileRef}
                 type="file"
                 accept=".pdf"
-                onChange={(e) => { setSelectedFile(e.target.files?.[0] || null); setUploadResult(null); }}
+                onChange={(e) => {
+                  const f = e.target.files?.[0] || null;
+                  if (f && f.size > MAX_FILE_SIZE) {
+                    setUploadResult({ ok: false, message: `❌ Fichier trop volumineux (${(f.size / 1024 / 1024).toFixed(1)} Mo). Maximum : ${MAX_FILE_SIZE_MB} Mo.` });
+                    setSelectedFile(null);
+                  } else {
+                    setSelectedFile(f);
+                    setUploadResult(null);
+                  }
+                }}
                 className="hidden"
               />
               {isDragging ? (
@@ -239,8 +255,8 @@ export function DocumentsInternes({ onError }: DocumentsInternesProps) {
               ) : (
                 <>
                   <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Glissez un PDF ici ou cliquez pour parcourir</span>
-                  <span className="text-xs text-muted-foreground/60">Format accepté : PDF</span>
+                   <span className="text-sm font-medium text-muted-foreground">Glissez un PDF ici ou cliquez pour parcourir</span>
+                   <span className="text-xs text-muted-foreground/60">Format : PDF — Max. {MAX_FILE_SIZE_MB} Mo</span>
                 </>
               )}
             </div>
