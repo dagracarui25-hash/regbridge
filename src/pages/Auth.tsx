@@ -62,12 +62,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 pointer-events-none dot-grid">
-        <div className="absolute top-[-15%] left-[-10%] w-[800px] h-[800px] rounded-full bg-primary/[0.14] blur-[180px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-accent-cyan/[0.07] blur-[160px]" />
-        <div className="absolute top-[50%] left-[60%] w-[400px] h-[400px] rounded-full bg-accent-gold/[0.04] blur-[140px]" />
-      </div>
+      <AuthBackground />
 
       {/* Left branding panel - hidden on mobile */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative z-10">
