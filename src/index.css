@@ -177,25 +177,24 @@
 }
 
 .chatbar-container {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
   border-radius: 16px;
   padding: 6px 18px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    0 4px 24px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
 }
 
 .chatbar-container:focus-within {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(45, 110, 255, 0.7);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(45, 110, 255, 0.6);
   box-shadow:
-    0 0 0 3px rgba(45, 110, 255, 0.25),
-    0 0 24px rgba(45, 110, 255, 0.2);
+    0 0 0 3px rgba(45, 110, 255, 0.2),
+    0 4px 24px rgba(0, 0, 0, 0.12);
 }
 
 .chatbar-input {
