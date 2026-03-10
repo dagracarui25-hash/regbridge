@@ -81,7 +81,7 @@ const Index = () => {
 
       {/* Tabs */}
       <div className="flex-1 flex flex-col overflow-hidden relative z-[5]">
-        <div className="flex-shrink-0 glass-strong border-b border-white/[0.04]">
+        <div className="flex-shrink-0 glass-strong border-b border-white/[0.04] relative z-[10]">
           <div className="max-w-6xl mx-auto px-2 sm:px-4">
             <div className="flex h-auto p-0 gap-0 w-full">
               {[

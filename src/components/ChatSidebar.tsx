@@ -41,7 +41,7 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-white/[0.06] z-[1]">
+    <Sidebar collapsible="icon" className="border-r border-white/[0.06] z-[1] overflow-hidden">
       <SidebarHeader className="p-3">
         {!collapsed && (
           <div className="flex items-center gap-2.5 mb-4 px-1">
@@ -74,7 +74,7 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
                 const isActive = conv.id === activeId;
                 const msgCount = conv.messages.filter((m) => m.role === "user").length;
                 return (
-                  <SidebarMenuItem key={conv.id}>
+                  <SidebarMenuItem key={conv.id} className="relative group/tooltip">
                     <SidebarMenuButton
                       isActive={isActive}
                       onClick={() => onSelect(conv.id)}
@@ -95,6 +95,11 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
                         </div>
                       )}
                     </SidebarMenuButton>
+                    {!collapsed && (
+                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-[#1E293B] text-white text-xs rounded-md whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 pointer-events-none z-50 max-w-[280px] break-words">
+                        {conv.title}
+                      </div>
+                    )}
                     {!collapsed && conversations.length > 1 && (
                       <SidebarMenuAction
                         showOnHover
