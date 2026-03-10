@@ -41,7 +41,7 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-white/[0.06] z-[1]">
+    <Sidebar collapsible="icon" className="border-r border-white/[0.06] z-[1] overflow-hidden">
       <SidebarHeader className="p-3">
         {!collapsed && (
           <div className="flex items-center gap-2.5 mb-4 px-1">
