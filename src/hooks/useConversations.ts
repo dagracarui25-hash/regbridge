@@ -17,12 +17,14 @@ export interface Conversation {
   updatedAt: number;
 }
 
-const WELCOME_MESSAGE: Message = {
-  id: 1,
-  role: "agent",
-  text: "Bienvenue dans RegBridge. Je suis votre assistant spécialisé en conformité réglementaire FINMA. Posez-moi vos questions sur les circulaires, la LBA ou tout autre sujet de compliance bancaire suisse. Je citerai toujours mes sources.",
-  sources: [],
-};
+function getWelcomeMessage(): Message {
+  return {
+    id: 1,
+    role: "agent",
+    text: i18n.t("chat.welcome"),
+    sources: [],
+  };
+}
 
 const STORAGE_KEY = "regbridge-conversations";
 
