@@ -209,7 +209,7 @@ export function useConversations(options: UseConversationsOptions = {}) {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "69420",
           },
-          body: JSON.stringify({ question: trimmed }),
+          body: JSON.stringify({ question: trimmed, langue: i18n.language.toUpperCase() }),
         });
 
         const json = await res.json();
