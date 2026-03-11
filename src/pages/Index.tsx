@@ -115,7 +115,7 @@ const Index = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="flex-1 flex flex-col overflow-hidden absolute inset-0 z-[1]"
+              className="flex-1 flex flex-col overflow-hidden absolute inset-0"
             >
               {activeTab === "question" && <QuestionFinma onError={handleError} onServerOnline={handleServerOnline} />}
               {activeTab === "croisee" && <AnalyseCroisee onError={handleError} />}

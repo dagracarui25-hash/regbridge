@@ -14,7 +14,7 @@ interface QuestionFinmaProps {
 }
 
 export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     conversations,
     activeConversation,
@@ -91,7 +91,7 @@ export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
           </div>
 
           <div className="flex-1 overflow-hidden">
-            <div ref={scrollRef} className="h-full overflow-y-auto px-4 sm:px-8 lg:px-16 pt-16 py-6 pb-8">
+            <div ref={scrollRef} className={`h-full overflow-y-auto px-4 sm:px-8 lg:px-16 ${i18n.language === "en" || i18n.language === "it" ? 'pt-20' : 'pt-16'} py-6 pb-8`}>
               <div className="max-w-full space-y-5">
                 <AnimatePresence initial={false}>
                   {messages.map((msg) => (
