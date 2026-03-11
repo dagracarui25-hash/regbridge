@@ -14,7 +14,7 @@ interface QuestionFinmaProps {
 }
 
 export function QuestionFinma({ onError, onServerOnline }: QuestionFinmaProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     conversations,
     activeConversation,
