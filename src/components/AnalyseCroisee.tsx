@@ -46,6 +46,13 @@ function splitResponse(fullText: string): { finma: string; interne: string } {
 
 export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
   const { t } = useTranslation();
+
+  const SUGGESTION_CARDS = [
+    { icon: Scale, key: t("cross.suggestKyc"), query: t("cross.suggestKycQuery") },
+    { icon: FileSearch, key: t("cross.suggestLba"), query: t("cross.suggestLbaQuery") },
+    { icon: GitCompare, key: t("cross.suggestCdb"), query: t("cross.suggestCdbQuery") },
+  ];
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
