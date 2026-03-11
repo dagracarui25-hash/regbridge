@@ -31,8 +31,8 @@ const STORAGE_KEY = "regbridge-conversations";
 function createNewConversation(): Conversation {
   return {
     id: crypto.randomUUID(),
-    title: "Nouvelle conversation",
-    messages: [{ ...WELCOME_MESSAGE }],
+    title: i18n.t("chat.newConversation"),
+    messages: [getWelcomeMessage()],
     createdAt: Date.now(),
     updatedAt: Date.now(),
   };
