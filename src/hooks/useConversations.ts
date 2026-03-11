@@ -220,7 +220,7 @@ export function useConversations(options: UseConversationsOptions = {}) {
         const agentMsg: Message = {
           id: nextId.current++,
           role: "agent",
-          text: json.reponse || "Pas de réponse.",
+          text: json.reponse || i18n.t("chat.noResponse"),
           sources,
         };
         setData((prev) => ({

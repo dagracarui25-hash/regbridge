@@ -80,7 +80,14 @@
     "noInternal": "No internal document loaded. Add documents in the <strong>Internal Documents</strong> tab.",
     "placeholder": "Ask your question for cross analysis...",
     "page": "Page {{page}}",
-    "exportPdf": "Export as PDF"
+    "exportPdf": "Export as PDF",
+    "waiting": "Waiting…",
+    "suggestKyc": "Compare internal KYC vs FINMA",
+    "suggestKycQuery": "Compare internal KYC obligations with FINMA requirements",
+    "suggestLba": "Analyze AML compliance",
+    "suggestLbaQuery": "Analyze the compliance of our procedures with AML regulations",
+    "suggestCdb": "Verify CDB procedures",
+    "suggestCdbQuery": "Verify the compliance of our CDB procedures with FINMA circulars"
   },
   "regs": {
     "button": "Regulations",

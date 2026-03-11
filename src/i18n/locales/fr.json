@@ -80,7 +80,14 @@
     "noInternal": "Aucun document interne chargé. Ajoutez des documents dans l'onglet <strong>Documents internes</strong>.",
     "placeholder": "Posez votre question pour l'analyse croisée...",
     "page": "Page {{page}}",
-    "exportPdf": "Exporter en PDF"
+    "exportPdf": "Exporter en PDF",
+    "waiting": "En attente…",
+    "suggestKyc": "Comparer KYC interne vs FINMA",
+    "suggestKycQuery": "Compare les obligations KYC internes avec les exigences FINMA",
+    "suggestLba": "Analyser la conformité LBA",
+    "suggestLbaQuery": "Analyse la conformité de nos procédures avec la LBA",
+    "suggestCdb": "Vérifier les procédures CDB",
+    "suggestCdbQuery": "Vérifie la conformité de nos procédures CDB avec les circulaires FINMA"
   },
   "regs": {
     "button": "Réglementations",

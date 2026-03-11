@@ -80,7 +80,14 @@
     "noInternal": "Nessun documento interno caricato. Aggiungi documenti nella scheda <strong>Documenti interni</strong>.",
     "placeholder": "Fai la tua domanda per l'analisi incrociata...",
     "page": "Pagina {{page}}",
-    "exportPdf": "Esporta in PDF"
+    "exportPdf": "Esporta in PDF",
+    "waiting": "In attesa…",
+    "suggestKyc": "Confronta KYC interno vs FINMA",
+    "suggestKycQuery": "Confronta gli obblighi KYC interni con i requisiti FINMA",
+    "suggestLba": "Analizzare la conformità LRD",
+    "suggestLbaQuery": "Analizza la conformità delle nostre procedure con la LRD",
+    "suggestCdb": "Verificare le procedure CDB",
+    "suggestCdbQuery": "Verifica la conformità delle nostre procedure CDB con le circolari FINMA"
   },
   "regs": {
     "button": "Regolamenti",

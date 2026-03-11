@@ -80,7 +80,14 @@
     "noInternal": "Kein internes Dokument geladen. Fügen Sie Dokumente im Tab <strong>Interne Dokumente</strong> hinzu.",
     "placeholder": "Stellen Sie Ihre Frage für die Kreuzanalyse...",
     "page": "Seite {{page}}",
-    "exportPdf": "Als PDF exportieren"
+    "exportPdf": "Als PDF exportieren",
+    "waiting": "Wartend…",
+    "suggestKyc": "Internes KYC vs FINMA vergleichen",
+    "suggestKycQuery": "Vergleiche die internen KYC-Pflichten mit den FINMA-Anforderungen",
+    "suggestLba": "GwG-Konformität analysieren",
+    "suggestLbaQuery": "Analysiere die Konformität unserer Verfahren mit dem GwG",
+    "suggestCdb": "CDB-Verfahren prüfen",
+    "suggestCdbQuery": "Prüfe die Konformität unserer CDB-Verfahren mit den FINMA-Rundschreiben"
   },
   "regs": {
     "button": "Regulierungen",

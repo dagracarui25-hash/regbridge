@@ -337,7 +337,7 @@ export function AnalyseCroisee({ onError }: AnalyseCroiseeProps) {
                   </>
                 ) : streaming ? (
                   <div className="flex items-center gap-2 py-4">
-                    <span className="text-sm text-muted-foreground/60">En attente…</span>
+                    <span className="text-sm text-muted-foreground/60">{t("cross.waiting")}</span>
                   </div>
                 ) : (
                   <div className="text-sm text-muted-foreground bg-secondary/30 rounded-xl p-4" dangerouslySetInnerHTML={{ __html: t("cross.noInternal") }} />
