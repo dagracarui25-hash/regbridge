@@ -41,8 +41,8 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-white/[0.06]">
-      <SidebarHeader className="p-3 overflow-visible">
+    <Sidebar collapsible="icon" className="border-r border-white/[0.06] overflow-hidden">
+      <SidebarHeader className="p-3 overflow-hidden">
         {!collapsed && (
           <div className="flex items-center gap-2.5 mb-4 px-1">
             <div className="w-8 h-8 rounded-xl gradient-primary flex items-center justify-center glow-sm">
@@ -57,7 +57,7 @@ export function ChatSidebar({ conversations, activeId, onSelect, onCreate, onDel
           className="w-full bg-[#2563EB] hover:bg-[#1d4ed8] text-white rounded-lg text-xs font-semibold h-10 px-4 transition-all duration-200 hover:scale-[1.02] shadow-md"
         >
           <Plus className="h-4 w-4 shrink-0" />
-          {!collapsed && <span className="ml-1.5 font-display">{t("chat.newConversation")}</span>}
+          {!collapsed && <span className="ml-1.5 font-display truncate">{t("chat.newConversation")}</span>}
         </Button>
       </SidebarHeader>
 
