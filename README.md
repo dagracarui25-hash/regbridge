@@ -1,11 +1,21 @@
-# 🏦 RegBridge — FINMA Compliance Assistant
+<p align="center">
+  <img src="https://raw.githubusercontent.com/dagracarui25-hash/regbridge/main/public/regbridge-logo.png" width="320" alt="RegBridge — FINMA Compliance Assistant"/>
+</p>
+
+<p align="center">
+  <a href="https://regbridge.lovable.app"><img src="https://img.shields.io/badge/🚀_Demo_Live-regbridge.lovable.app-blue?style=for-the-badge" alt="App Live"/></a>
+  <a href="https://qdrant.tech"><img src="https://img.shields.io/badge/Vector_DB-Qdrant_Cloud-red?style=for-the-badge" alt="Qdrant"/></a>
+  <a href="https://huggingface.co"><img src="https://img.shields.io/badge/Embeddings-HuggingFace-yellow?style=for-the-badge" alt="HuggingFace"/></a>
+</p>
+
+<p align="center">
+  <a href="https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%201%20:%20Ingestion%20des%20PDFs%20FINMA"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab – Step 1"/></a>
+  <a href="https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%202%20:%20Build%20Serveur%20Complet.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab – Step 2"/></a>
+</p>
+
+# RegBridge — FINMA Compliance Assistant
 
 > **GenAI Zürich Hackathon 2026** · Qdrant Challenge
-
-[![App Live](https://img.shields.io/badge/🚀_Demo_Live-regbridge.lovable.app-blue?style=for-the-badge)](https://regbridge.lovable.app)
-[![Qdrant](https://img.shields.io/badge/Vector_DB-Qdrant_Cloud-red?style=for-the-badge&logo=qdrant)](https://qdrant.tech)
-[![Open in Colab – Step 1](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%201%20:%20Ingestion%20des%20PDFs%20FINMA)
-[![Open in Colab – Step 2](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%202%20:%20Build%20Serveur%20Complet.ipynb)
 
 ---
 
@@ -27,6 +37,7 @@ RegBridge is a conversational AI assistant that enables a compliance officer to:
 - 📁 **Upload internal documents** (policies, procedures, contracts) → indexed in real time
 - 🔀 **Cross-reference** official regulations + internal documents in a single query
 - ⚡ **Get sourced answers** with precise article and page references
+- 📊 **Export cross-analysis results** as a PDF compliance report
 - 🌍 **Multilingual** : FR · EN · DE · IT
 
 ---
@@ -103,7 +114,7 @@ RegBridge is a conversational AI assistant that enables a compliance officer to:
 | Tab | What it does |
 |---|---|
 | 💬 **FINMA Question** | Natural language query on indexed FINMA circulars · sourced answers with PDF + page |
-| 🔀 **Cross-analysis** | Simultaneous query of both Qdrant collections · compliance gap detection |
+| 🔀 **Cross-analysis** | Simultaneous query of both Qdrant collections · compliance gap detection · **export results as PDF report** |
 | 📁 **Internal documents** | Upload PDFs · real-time Qdrant indexing · library with audit trail |
 
 ---
@@ -114,7 +125,7 @@ RegBridge is a conversational AI assistant that enables a compliance officer to:
 |---|---|---|
 | Frontend | React · TypeScript · Lovable | User interface (FR/DE/EN/IT) |
 | Backend | FastAPI · Python · Uvicorn | REST API |
-| Embeddings | HuggingFace `paraphrase-multilingual-MiniLM-L12-v2` | Multilingual vectorization (384 dim) |
+| Embeddings | **HuggingFace** `paraphrase-multilingual-MiniLM-L12-v2` | Multilingual vectorization (384 dim) |
 | **Vector DB** | **Qdrant Cloud** | **Dual-collection vector storage + search** |
 | RAG | LangChain · MergerRetriever | Cross-collection retrieval pipeline |
 | LLM | Groq API · `llama-3.1-8b-instant` | Response generation (<1s latency) |
@@ -175,8 +186,8 @@ No installation required — live at **[regbridge.lovable.app](https://regbridge
 
 | Version | Features | Status |
 |---|---|---|
-| **v1.0 MVP** | FINMA RAG · Internal docs upload · Dual-collection cross-analysis · 4 languages | ✅ Today |
-| **v2.0** | DORA · DPA/GDPR · Basel III/IV · PDF export · Multi-user | 🔒 Post-hackathon |
+| **v1.0 MVP** | FINMA RAG · Internal docs upload · Dual-collection cross-analysis · **PDF report export** · 4 languages | ✅ Today |
+| **v2.0** | DORA · DPA/GDPR · Basel III/IV · Multi-user with roles · Cross-session memory | 🔒 Post-hackathon |
 | **v3.0** | 40+ regulatory frameworks · Auto-alerts · Core banking integration | 🔒 Long-term |
 
 ---
