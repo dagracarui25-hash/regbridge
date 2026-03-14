@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="https://raw.githubusercontent.com/dagracarui25-hash/regbridge/main/public/regbridge-sponsors-banner.png" width="800" alt="RegBridge — Partners: Qdrant · HuggingFace · Lovable"/>
+</p>
+
+<p align="center">
   <a href="https://regbridge.lovable.app"><img src="https://img.shields.io/badge/🚀_Demo_Live-regbridge.lovable.app-blue?style=for-the-badge" alt="App Live"/></a>
   <a href="https://qdrant.tech"><img src="https://img.shields.io/badge/Vector_DB-Qdrant_Cloud-red?style=for-the-badge" alt="Qdrant"/></a>
   <a href="https://huggingface.co"><img src="https://img.shields.io/badge/Embeddings-HuggingFace-yellow?style=for-the-badge" alt="HuggingFace"/></a>
