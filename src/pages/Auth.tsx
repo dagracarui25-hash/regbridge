@@ -115,7 +115,7 @@ const Auth = () => {
               {t("auth.subtitle")}
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Intelligence réglementaire augmentée par l'IA pour les professionnels de la compliance.
+              {t("auth.brandingDesc")}
             </p>
           </motion.div>
 
