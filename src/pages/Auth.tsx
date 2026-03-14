@@ -115,7 +115,7 @@ const Auth = () => {
               {t("auth.subtitle")}
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Intelligence réglementaire augmentée par l'IA pour les professionnels de la compliance.
+              {t("auth.brandingDesc")}
             </p>
           </motion.div>
 
@@ -126,9 +126,9 @@ const Auth = () => {
             className="mt-12 space-y-4"
           >
             {[
-              "Analyse FINMA en temps réel",
-              "Conformité Bâle III / IV",
-              "Documents internes sécurisés",
+              t("auth.feature1"),
+              t("auth.feature2"),
+              t("auth.feature3"),
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3 text-muted-foreground">
                 <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan shrink-0" />
