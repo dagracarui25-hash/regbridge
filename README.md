@@ -1,73 +1,194 @@
-# Welcome to your Lovable project
+# 🏦 RegBridge — FINMA Compliance Assistant
 
-## Project info
+> **GenAI Zürich Hackathon 2026** · Qdrant Challenge
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[![App Live](https://img.shields.io/badge/🚀_Demo_Live-regbridge.lovable.app-blue?style=for-the-badge)](https://regbridge.lovable.app)
+[![Qdrant](https://img.shields.io/badge/Vector_DB-Qdrant_Cloud-red?style=for-the-badge&logo=qdrant)](https://qdrant.tech)
+[![Open in Colab – Step 1](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%201%20:%20Ingestion%20des%20PDFs%20FINMA)
+[![Open in Colab – Step 2](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dagracarui25-hash/regbridge/blob/main/notebooks/RegBridge%20%E2%80%94%20Step%202%20:%20Build%20Serveur%20Complet.ipynb)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🎯 The Problem
 
-**Use Lovable**
+Compliance teams at Swiss private banks spend **weeks manually** verifying that their internal procedures align with FINMA circulars.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+> _"A compliance officer spends an average of 3 hours per week manually searching through FINMA texts."_
 
-Changes made via Lovable will be committed automatically to this repo.
+**RegBridge automates this analysis using generative AI and Qdrant vector search.**
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 💡 The Solution
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+RegBridge is a conversational AI assistant that enables a compliance officer to:
 
-Follow these steps:
+- 📄 **Query FINMA regulations** in natural language (circulars 2016/7, 2023/1, 2025/2)
+- 📁 **Upload internal documents** (policies, procedures, contracts) → indexed in real time
+- 🔀 **Cross-reference** official regulations + internal documents in a single query
+- ⚡ **Get sourced answers** with precise article and page references
+- 🌍 **Multilingual** : FR · EN · DE · IT
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🔷 Qdrant at the Core — Dual-Collection Architecture
 
-# Step 3: Install the necessary dependencies.
-npm i
+> This is the technical heart of RegBridge. Two dedicated Qdrant collections are queried **simultaneously** to detect compliance gaps between official regulations and internal procedures.
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  QDRANT CLOUD — Dual Collection                  │
+│                                                                  │
+│  ┌──────────────────────────┐  ┌──────────────────────────────┐ │
+│  │   Collection 1           │  │   Collection 2               │ │
+│  │   finma_docs             │  │   internal_docs              │ │
+│  │                          │  │                              │ │
+│  │  • Circ. FINMA 2023/1    │  │  • Internal procedures       │ │
+│  │  • Circ. FINMA 2016/7    │  │  • Policies & regulations    │ │
+│  │  • OBA-FINMA             │  │  • Uploaded PDFs             │ │
+│  │  • CDB 2020              │  │  • Auto-chunked + indexed    │ │
+│  │                          │  │                              │ │
+│  │  HuggingFace Embeddings  │  │  HuggingFace Embeddings      │ │
+│  │  384 dimensions          │  │  384 dimensions              │ │
+│  └──────────┬───────────────┘  └──────────────┬───────────────┘ │
+│             │                                  │                 │
+│             └──────────────┬───────────────────┘                 │
+│                            │                                     │
+│                    Cross-Query Engine                            │
+│               (LangChain MergerRetriever)                        │
+│          → Gap detection · Sourced citations · FR/DE/EN/IT       │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+              ┌──────────────▼──────────────┐
+              │    Groq API · LLaMA 3.1 8B  │
+              │    (response generation)     │
+              └──────────────┬──────────────┘
+                             │
+              ┌──────────────▼──────────────┐
+              │   FastAPI Backend · Python   │
+              │   POST /query               │
+              │   POST /cross-query         │
+              │   POST /upload              │
+              └──────────────┬──────────────┘
+                             │  HTTPS · ngrok
+              ┌──────────────▼──────────────┐
+              │  React Frontend · Lovable   │
+              │  regbridge.lovable.app       │
+              └─────────────────────────────┘
 ```
 
-**Edit a file directly in GitHub**
+### Why dual-collection matters
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+| Single-collection RAG | RegBridge dual-collection |
+|---|---|
+| Can only answer questions about one corpus | Queries FINMA + internal docs simultaneously |
+| No gap detection | Detects misalignments between regulation and practice |
+| Generic compliance Q&A | Actionable recommendations per institution |
+| Replicable by any LLM | Private document indexing = institutional value |
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🚀 Live Demo
 
-## What technologies are used for this project?
+### 👉 [https://regbridge.lovable.app](https://regbridge.lovable.app)
 
-This project is built with:
+> React interface deployed via Lovable  
+> FastAPI backend on Google Colab + ngrok  
+> ⚠️ To test: run notebook Step 2 first to activate the backend
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🗂️ Three Tabs, One Workflow
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+| Tab | What it does |
+|---|---|
+| 💬 **FINMA Question** | Natural language query on indexed FINMA circulars · sourced answers with PDF + page |
+| 🔀 **Cross-analysis** | Simultaneous query of both Qdrant collections · compliance gap detection |
+| 📁 **Internal documents** | Upload PDFs · real-time Qdrant indexing · library with audit trail |
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## ⚙️ Full Tech Stack
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+| Layer | Technology | Role |
+|---|---|---|
+| Frontend | React · TypeScript · Lovable | User interface (FR/DE/EN/IT) |
+| Backend | FastAPI · Python · Uvicorn | REST API |
+| Embeddings | HuggingFace `paraphrase-multilingual-MiniLM-L12-v2` | Multilingual vectorization (384 dim) |
+| **Vector DB** | **Qdrant Cloud** | **Dual-collection vector storage + search** |
+| RAG | LangChain · MergerRetriever | Cross-collection retrieval pipeline |
+| LLM | Groq API · `llama-3.1-8b-instant` | Response generation (<1s latency) |
+| Backend deploy | Google Colab · ngrok | Public FastAPI server |
+| Frontend deploy | Lovable | Web interface |
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 🗄️ Qdrant Collections
+
+| Collection | Content | Embedding model | Usage |
+|---|---|---|---|
+| `finma_docs` | FINMA Circulars 2016/7, 2023/1, OBA-FINMA, CDB 2020 | `paraphrase-multilingual-MiniLM-L12-v2` | Regulatory questions |
+| `internal_docs` | Internal documents uploaded by the user | `paraphrase-multilingual-MiniLM-L12-v2` | Cross-reference queries |
+
+---
+
+## 🚀 Running the Project
+
+### 1. Environment Variables
+
+```env
+QDRANT_URL=https://xxx.qdrant.io
+QDRANT_API_KEY=your_qdrant_key
+GROQ_API_KEY=your_groq_key
+NGROK_AUTH_TOKEN=your_ngrok_token
+VITE_API_URL=https://xxx.ngrok-free.app
+```
+
+### 2. Backend — Google Colab
+
+```bash
+# Step 1 — Index FINMA documents (run once)
+# Open notebooks/Step 1 → Run all cells
+# FINMA circulars indexed in Qdrant finma_docs ✅
+
+# Step 2 — Start the server (each session)
+# Open notebooks/Step 2 → Run all cells
+# Copy the public ngrok URL → paste into the frontend
+```
+
+### 3. Frontend
+
+No installation required — live at **[regbridge.lovable.app](https://regbridge.lovable.app)**
+
+---
+
+## 📓 Notebooks
+
+| # | Notebook | Description |
+|---|---|---|
+| 1 | Step 1 — FINMA PDF Ingestion | Load, split and index FINMA circulars into `finma_docs` |
+| 2 | Step 2 — Full Server | FastAPI + dual-collection RAG + ngrok + internal document upload |
+
+---
+
+## 🗺️ Roadmap
+
+| Version | Features | Status |
+|---|---|---|
+| **v1.0 MVP** | FINMA RAG · Internal docs upload · Dual-collection cross-analysis · 4 languages | ✅ Today |
+| **v2.0** | DORA · DPA/GDPR · Basel III/IV · PDF export · Multi-user | 🔒 Post-hackathon |
+| **v3.0** | 40+ regulatory frameworks · Auto-alerts · Core banking integration | 🔒 Long-term |
+
+---
+
+## 👤 Team
+
+| Name | Role |
+|---|---|
+| [@dagracarui25-hash](https://github.com/dagracarui25-hash) | Senior Systems Engineer · Private Bank Geneva |
+
+---
+
+## 📜 License
+
+MIT — Built for **GenAI Zürich Hackathon 2026 · Qdrant Challenge**
